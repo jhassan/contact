@@ -1,9 +1,9 @@
 <?php
 /**
-* This class will handle User Management
+* This class will handle Request Management
 * @author Jawad Hassan
 */
-class User_Model extends CI_Model {
+class Request_Model extends CI_Model {
 	private $localdb;
 /**
 *	Default Constructor, Do nothing for now
@@ -14,26 +14,6 @@ class User_Model extends CI_Model {
     	$this->localdb = $this->load->database('localdb', TRUE);
     }
 
-    public function do_login($name, $password) {
-    	$where = array (
-    		"username"		=>	$name,
-    		"password"	=>	md5($password)
-    	);
-    	$query = $this->localdb->get_where("chr_users", $where);
-    	if($query->num_rows()==1):
-    		$user = $query->first_row();
-    		$sessionData = array (
-    			"logged_in"					=>	TRUE,
-    			"name"						=>	$user->fname . " " . $user->lname,
-    			"user_id"					=>	$user->id,
-                "user_type"                 =>  $user->user_type,
-        		);
-    		$this->session->set_userdata($sessionData);
-    		return TRUE;
-    	else:
-    		return FALSE;
-    	endif;
-    }
     public function do_logout() {
         $this->session->sess_destroy();
         return TRUE;

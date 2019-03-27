@@ -157,6 +157,24 @@ License: You must have a valid license purchased only from templatemonster to le
                                 </li>
                             </ul>
                         </li>
+                        <li class="nav-item active">
+                            <a class="nav-link" href="javascript:void(0);" data-toggle="collapse" data-target="#request_drp">
+                                <span class="feather-icon"><svg class="feather feather-users sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="1311"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
+                                <span class="nav-link-text">Manage Request</span>
+                            </a>
+                            <ul id="request_drp" class="nav flex-column collapse collapse-level-1">
+                                <li class="nav-item">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="<?php echo site_url('request/create_request'); ?>">Create Request</a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" href="<?php echo site_url('user/view_request'); ?>">View/Edit Request</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
                         
                         
                     </ul>

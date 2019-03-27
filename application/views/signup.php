@@ -59,7 +59,7 @@
                                     </div>
                                     <div class="form-group">
                                         <div class="input-group">
-                                            <input class="form-control" name="re-password" placeholder="Confirm Password" type="password">
+                                            <input class="form-control" name="confirm_password" placeholder="Confirm Password" type="password">
                                             <div class="input-group-append">
                                                 <span class="input-group-text"><span class="feather-icon"><i data-feather="eye-off"></i></span></span>
                                             </div>

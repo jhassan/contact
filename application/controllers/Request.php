@@ -1,10 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class User extends CI_Controller {
+class Request extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
-		$this->load->model("User_Model");
+		$this->load->model("Request_Model");
 		$this->load->helper('form', 'url');
 		$this->data = array(
 			"title"	=>	"Dashboard"
@@ -13,39 +13,12 @@ class User extends CI_Controller {
 		// 	redirect(site_url("/"));
 		// endif;
 	}
-	public function index()
-	{
-		if($this->User_Model->is_logged_in()):
-			redirect(site_url('request/view_request'));
-			return;
-		endif;
-		
-		$message = "";
-		if($this->input->post("action")=="do_login"):
-			$this->load->library("form_validation");
-			$this->form_validation->set_rules("username", "User Name", "required");
-			$this->form_validation->set_rules("password", "Password", "required");
-			$this->form_validation->set_rules("action", "Credentials", "required|callback_user_login_check");
-
-			if($this->form_validation->run()===FALSE):
-				$message = validation_errors();
-				$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
-			else:
-				redirect(site_url("request/view_request"));
-			endif;
-		endif;
-		$data = array (
-			"message"	=>	$message
-		);
-		//print_r($data);
-		$this->load->view('login', $data);
-	}
-	public function create_user(){
+	public function create_request(){
 		// if(!in_array("22", $this->permission)):
   //   		$this->permission_denied();
   //   		return;
   //   	endif;
-		if($this->input->post("action")=="create_user"):
+		if($this->input->post("action")=="create_request"):
 			// Validate Form
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('fname', 'First Name', 'required|min_length[1]|max_length[100]');
@@ -103,7 +76,7 @@ class User extends CI_Controller {
 			$this->load->view("crm-app/user/create_user", $this->data);
 			$this->load->view("crm-app/includes/footer", $this->data);
 	}
-	public function edit_user($edit_id)
+	public function edit_request($edit_id)
 	{
 		//var_dump($edit_id);
 		// if(!in_array("23", $this->permission)):
@@ -156,28 +129,16 @@ class User extends CI_Controller {
 		$this->load->view("crm-app/user/edit_user", $this->data);
 		$this->load->view("crm-app/includes/footer", $this->data);
 	}
-	public function view_user()
-	{
-		// if(!in_array("24", $this->permission)):
-  //   		$this->permission_denied();
-  //   		return;
-  //   	endif;
-		$this->data["title"]				=	"View User";
-		//$this->data["permission"]			=	$this->permission;
-		$this->load->view("crm-app/includes/header", $this->data);
-		$this->load->view("crm-app/user/view_user", $this->data);
-		$this->load->view("crm-app/includes/footer", $this->data);
-	}
 	public function view_request()
 	{
 		// if(!in_array("24", $this->permission)):
   //   		$this->permission_denied();
   //   		return;
   //   	endif;
-		$this->data["title"]				=	"View User Request";
+		$this->data["title"]				=	"View Request";
 		//$this->data["permission"]			=	$this->permission;
 		$this->load->view("crm-app/includes/header", $this->data);
-		$this->load->view("crm-app/user/view_user_request", $this->data);
+		$this->load->view("crm-app/request/view_request", $this->data);
 		$this->load->view("crm-app/includes/footer", $this->data);
 	}
 
@@ -213,7 +174,7 @@ class User extends CI_Controller {
 		$this->load->view('signup', $data);
 	}
 
-	public function delete_user()
+	public function delete_request()
 	{
 		$delete_id = $this->input->post("delete_id");
 		$this->User_Model->delete_user($delete_id);
