@@ -16,4 +16,19 @@ if ( ! function_exists('get_users'))
     }   
 }
 
+// Get All users
+if ( ! function_exists('get_countries'))
+{
+    function get_countries()
+    {
+        $ci=& get_instance();
+	    $ci->load->database(); 
+
+	    $sql = "select * from chr_countries order by country_name"; 
+	    $query = $ci->db->query($sql);
+	    $row = $query->result();
+	    return $row;
+    }   
+}
+
 

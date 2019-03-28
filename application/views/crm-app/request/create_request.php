@@ -2,48 +2,80 @@
 <div class="container">
 	<nav class="hk-breadcrumb" aria-label="breadcrumb">
     <ol class="breadcrumb breadcrumb-light bg-transparent">
-        <li class="breadcrumb-item"><a href="<?php echo site_url('user/view_user'); ?>">Users</a></li>
-        <li class="breadcrumb-item active" aria-current="page">Create User</li>
+        <li class="breadcrumb-item"><a href="<?php echo site_url('request/view_request'); ?>">Requests</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Create Request</li>
     </ol>
 </nav>
 	<div class="hk-pg-header">
-        <h4 class="hk-pg-title"><span class="pg-title-icon"><span class="feather-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-toggle-right"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="16" cy="12" r="3"></circle></svg></span></span>Create User</h4>
+        <h4 class="hk-pg-title"><span class="pg-title-icon"><span class="feather-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-toggle-right"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="16" cy="12" r="3"></circle></svg></span></span>Create Request</h4>
     </div>
     <div class="row">
     	<div class="col-xl-12">
     		<section class="hk-sec-wrapper">
 	            <div class="row">
-	            	<form action="create_user" class="form needs-validation" id="create_profile" enctype="multipart/form-data" method="post" novalidate>
-	            		<input type="hidden" name="action" value="create_user">
+	            	<form action="create_request" class="form needs-validation" id="create_request" enctype="multipart/form-data" method="post" novalidate>
+	            		<input type="hidden" name="action" value="create_request">
 	            		<input type="hidden" name="edit_id" value="">
 	                <div class="col-sm">
 	                    <div class="row">
 	                    	<div class="col-md-4 form-group">
-                                <label for="fname">First Name</label>
-                                <input class="form-control" id="fname" value="<?php echo set_value("fname"); ?>" name="fname" type="text" required="required">
+                                <label for="fname">Name</label>
+                                <input class="form-control" id="name" value="<?php echo set_value("name"); ?>" name="name" type="text" required="required">
                                 <div class="invalid-feedback">
-                                    Please enter first name.
+                                    Please enter name.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="lname">Last Name</label>
-                                <input class="form-control" id="lname" value="<?php echo set_value("lname"); ?>" name="lname" type="text" required="required">
+                                <label for="country">Gender</label>
+                                <?php
+                                    $gender_options = array(
+                                    '' => 'Gender',
+                                    '1' => 'Male',
+                                    '2' => 'Female',
+                                    );
+                                    echo form_dropdown('gender', $gender_options, set_value('gender'), 'class="form-control custom-select d-block w-100" required="required" id="gender"');
+                                ?>
                                 <div class="invalid-feedback">
-                                    Please enter last name.
+                                    Please select gender.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="username">User Name</label>
-                                <input class="form-control" id="username" value="<?php echo set_value("username"); ?>" name="username" type="text" required="required">
+                                <label for="age">Age</label>
+                                <input class="form-control" id="age" value="<?php echo set_value("age"); ?>" name="age" type="text">
                                 <div class="invalid-feedback">
-                                    Please enter username.
+                                    Please enter age.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="password">Password</label>
-                                <input class="form-control" id="password" value="<?php echo set_value("password"); ?>" name="password" type="password" required="required">
+                                <label for="city">City</label>
+                                <input class="form-control" id="city" value="<?php echo set_value("city"); ?>" name="city" type="text">
                                 <div class="invalid-feedback">
-                                    Please enter password.
+                                    Please enter city.
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="country">Country</label>
+                                <?php
+                                    $countrys = get_countries();
+                                    $options_country = array("" => "Select country");
+                                    foreach($countrys as $country):
+                                        $options_country[$country->id]  = $country->country_name;
+                                    endforeach;
+                                    echo form_dropdown("country_id", $options_country,  set_value("country_id"), "class='form-control custom-select d-block w-100 select2' required='required' id='country_id'");
+                                ?>
+                                <div class="invalid-feedback">
+                                    Please select country.
+                                </div>
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="cnic">CNIC</label>
+                                <input class="form-control" id="cnic" value="<?php echo set_value("cnic"); ?>" name="cnic" placeholder="00000-0000000-0" data-mask="00000-0000000-0" maxlength="16" type="text">
+                            </div>
+                            <div class="col-md-4 form-group">
+                                <label for="passport">Passport #</label>
+                                <input class="form-control" id="passport" value="<?php echo set_value("passport"); ?>" name="passport" placeholder="000000000000" data-mask="999999999999" type="text">
+                                <div class="invalid-feedback">
+                                    Please enter passport.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
@@ -54,96 +86,33 @@
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="country">User type</label>
-                                <?php
-                                    $type_options = array(
-                                    '' => 'User Type',
-                                    '1' => 'Admin',
-                                    '2' => 'Manager',
-                                    '3' => 'Agent',
-                                    );
-                                    echo form_dropdown('user_type_id', $type_options, set_value('user_type_id'), 'class="form-control custom-select d-block w-100" required="required" id="user_type_id"');
-                                ?>
+                                <label for="contact">Contact #</label>
+                                <input class="form-control" id="contact" value="<?php echo set_value("contact"); ?>" name="contact" placeholder="0000-0000000" data-mask="9999-9999999" type="text">
                                 <div class="invalid-feedback">
-                                    Please select user type.
+                                    Please enter contact.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="country">Group</label>
-                                <?php
-                                    $groups = get_groups();
-                                    $options_group = array("" => "Select group");
-                                    foreach($groups as $group):
-                                        $options_group[$group->id]  = $group->group_name;
-                                    endforeach;
-                                    echo form_dropdown("group_id", $options_group,  set_value("group_id"), "class='form-control custom-select d-block w-100' required='required' id='group_id'");
-                                ?>
+                                <label for="course">Course</label>
+                                <input class="form-control" id="course" value="<?php echo set_value("course"); ?>" name="course" type="text">
                                 <div class="invalid-feedback">
-                                    Please select group.
+                                    Please enter course.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="phone">Phone</label>
-                                <input class="form-control" id="phone" value="<?php echo set_value("phone"); ?>" name="phone" placeholder="0000-0000-0000" data-mask="9999-9999-9999" required="required" type="text">
+                                <label for="duration">Duration</label>
+                                <input class="form-control" id="duration" value="<?php echo set_value("duration"); ?>" name="duration" type="text">
                                 <div class="invalid-feedback">
-                                    Please enter phone.
+                                    Please enter duration.
                                 </div>
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="alt_phone">Alt-Phone</label>
-                                <input class="form-control" id="alt_phone" value="<?php echo set_value("alt_phone"); ?>" placeholder="0000-0000-0000" data-mask="9999-9999-9999" name="alt_phone" type="text">
+                                <label for="cnic">Passport Image</label>
+                                <input class="form-control" id="passport_image" value="" name="passport_image" type="file">
                             </div>
                             <div class="col-md-4 form-group">
-                                <label for="cnic">CNIC</label>
-                                <input class="form-control" id="cnic" value="<?php echo set_value("cnic"); ?>" name="cnic" placeholder="00000-0000000-0" data-mask="00000-0000000-0" maxlength="16" type="text">
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="cnic">Image</label>
-                                <input class="form-control" id="user_image" value="" name="user_image" type="file">
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="country">Status</label>
-                                <?php
-                                    $status_options = array(
-                                    '' => 'Status',
-                                    '0' => 'Enable',
-                                    '1' => 'Disable',
-                                    );
-                                    echo form_dropdown('status', $status_options, set_value('status'), 'class="form-control custom-select d-block w-100" required="required" id="status"');
-                                ?>
-                                <div class="invalid-feedback">
-                                    Please select status.
-                                </div>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="country">Schedule</label>
-                                <?php
-                                    $schedules = get_schedules();
-                                    $options_schedule = array("" => "Select schedule");
-                                    foreach($schedules as $schedule):
-                                        $options_schedule[$schedule->id]  = $schedule->time_in . " - " . $schedule->time_out;
-                                    endforeach;
-                                    echo form_dropdown("schedule_id", $options_schedule,  set_value("schedule_id"), "class='form-control custom-select d-block w-100 select2' required='required' id='schedule_id'");
-                                ?>
-                                <div class="invalid-feedback">
-                                    Please select schedule.
-                                </div>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="basic_salary">Basic Salary</label>
-                                <input class="form-control" id="basic_salary" value="<?php echo set_value("basic_salary"); ?>" name="basic_salary" placeholder="000000" data-mask="000000" maxlength="6" type="text" required='required'>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="kpi">KPI</label>
-                                <input class="form-control" id="kpi" value="<?php echo set_value("kpi"); ?>" name="kpi" placeholder="000000" data-mask="000000" maxlength="6" type="text" required='required'>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="rate_per_hour">Rate per Hour</label>
-                                <input class="form-control" id="rate_per_hour" value="<?php echo set_value("rate_per_hour"); ?>" name="rate_per_hour" placeholder="0000" data-mask="0000" maxlength="4" type="text" required='required'>
-                            </div>
-                            <div class="col-md-4 form-group">
-                                <label for="total_hours">Total Hours</label>
-                                <input class="form-control" id="total_hours" value="<?php echo set_value("total_hours"); ?>" name="total_hours" placeholder="000" data-mask="000" maxlength="3" type="text" required='required'>
+                                <label for="cnic">Fee Recipt Image</label>
+                                <input class="form-control" id="fee_recipt_image" value="" name="fee_recipt_image" type="file">
                             </div>
 	                    </div>
 	                    <div class="row">

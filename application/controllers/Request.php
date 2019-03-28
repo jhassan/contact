@@ -21,18 +21,8 @@ class Request extends CI_Controller {
 		if($this->input->post("action")=="create_request"):
 			// Validate Form
 			$this->load->library('form_validation');
-			$this->form_validation->set_rules('fname', 'First Name', 'required|min_length[1]|max_length[100]');
-			$this->form_validation->set_rules('lname', 'Last Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[1]|max_length[20]|is_unique[chr_users.username]');
-            $this->form_validation->set_rules('password', 'Password', 'required');
-            $this->form_validation->set_rules('phone', 'Phone', 'required|min_length[1]|max_length[14]|is_unique[chr_users.phone]');
-            $this->form_validation->set_rules('address', 'Address', 'required|min_length[1]|max_length[255]');
-            $this->form_validation->set_rules('user_type_id', 'User Type', 'required');
+			$this->form_validation->set_rules('name', 'Name', 'required|min_length[1]|max_length[100]');
             $this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
-            $this->form_validation->set_rules('basic_salary', 'Basic Salry', 'required');
-            $this->form_validation->set_rules('kpi', 'KPI', 'required');
-            $this->form_validation->set_rules('total_hours', 'Total Hours', 'required');
-            $this->form_validation->set_rules('rate_per_hour', 'Rate per Hour', 'required');
    //          if (empty($_FILES['user_image']['name']))
 			// {
 			//     $this->form_validation->set_rules('user_image', 'User Image', 'required');
@@ -43,37 +33,40 @@ class Request extends CI_Controller {
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
             	else:
             	// Insert into profile
-        		$name = $_FILES["user_image"]["name"];
-        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/crm/uploads/user_image/';
+        		$passport_image = $_FILES["passport_image"]["name"];
+        		$fee_recipt_image = $_FILES["fee_recipt_image"]["name"];
+        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/contact/uploads/user_images/';
         		$config['upload_path'] 		= $uploadpath; 
 			    $config['allowed_types'] 	= 'gif|jpg|png|jpeg';
 			    $config['max_size']      	= 10000;
 			    $this->load->library('upload', $config);
-			    // if( ! $this->upload->do_upload('user_image') && empty($this->input->post("edit_id"))){
-			    //     $error = array('error' => $this->upload->display_errors());
-			    //     $this->load->view('user/create_user', $error);
-			    // }
-			    // else{
-			    // 	$this->upload->do_upload('user_image');
-			    //     $upload_data = $this->upload->data();
-			    // }	
+			    if( ! $this->upload->do_upload('passport_image') && empty($this->input->post("edit_id"))){
+			        $error = array('error' => $this->upload->display_errors());
+			        $this->load->view('request/view_request', $error);
+			    }
+			    else{
+			    	$this->upload->do_upload('passport_image');
+			    	$this->upload->do_upload('fee_recipt_image');
+			        $upload_data = $this->upload->data();
+			    }	
             	// Insert into user
             	$GetInsertArray = array();
             	$GetInsertArray = $this->input->post();
           //   	$permission_checked = $this->input->post('permission');
         		// $arrayChickList = implode(',', $permission_checked);
         		// $GetInsertArray['arrayChickList'] = $arrayChickList;
-        		$GetInsertArray['user_image'] = trim($name);
-            	$this->User_Model->insert_user($GetInsertArray);
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
-            	redirect(site_url("user/view_user"));
+        		$GetInsertArray['passport_image'] = trim($passport_image);
+        		$GetInsertArray['fee_recipt_image'] = trim($fee_recipt_image);
+            	$this->Request_Model->insert_request($GetInsertArray);
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully"));
+            	redirect(site_url("request/view_request"));
             endif;
 		endif;
 			// $this->data["patentPermission"]		= $this->User_Model->parent_permissions();
 			// $this->data["childPermission"]		= $this->User_Model->child_permissions();
-			$this->data["title"]				=	"Create User";
+			$this->data["title"]				=	"Create Request";
 			$this->load->view("crm-app/includes/header", $this->data);
-			$this->load->view("crm-app/user/create_user", $this->data);
+			$this->load->view("crm-app/request/create_request", $this->data);
 			$this->load->view("crm-app/includes/footer", $this->data);
 	}
 	public function edit_request($edit_id)

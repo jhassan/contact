@@ -25,16 +25,26 @@ class Request_Model extends CI_Model {
             return FALSE;
         endif;
     }
-    public function insert_signup($data_array)
+    public function insert_request($data_array)
     {
         $data = array(
-            'fname'        => $data_array['fname'],
-            'lname'        => $data_array['lname'],
-            'password'     => md5($data_array['password']),
-            'email'        => $data_array['email'],
+            'name'          => $data_array['name'],
+            'gender'        => $data_array['gender'],
+            'age'           => $data_array['age'],
+            'city'          => $data_array['city'],
+            'country_id'    => $data_array['country_id'],
+            'cnic'          => $data_array['cnic'],
+            'passport'      => $data_array['passport'],
+            'email'         => $data_array['email'],
+            'contact'       => $data_array['contact'],
+            'course'        => $data_array['course'],
+            'duration'      => $data_array['duration'],
+            'passport_image'   => $data_array['passport_image'],
+            'fee_recipt_image' => $data_array['fee_recipt_image'],
+            'address'          => $data_array['address'],
             'created_at'   => date("Y-m-d H:i:s")
         );
-        $this->localdb->insert('chr_users', $data);
+        $this->localdb->insert('chr_requests', $data);
     }
 
     public function get_user($draw, $page_number, $limit, $search, $order, $min, $max)
