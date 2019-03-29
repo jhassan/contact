@@ -21,27 +21,21 @@
                     <div class="row">
                         <div class="col-sm">
                             <div class="table-wrap" style="overflow: auto">
-                                <table id="show_list_users" class="table table-hover w-100 display pb-30">
+                                <table id="show_list_requests" class="table table-hover w-100 display pb-30">
                                     <thead>
                                         <tr>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
                                             <th>User Name</th>
-                                            <th>User Type</th>
-                                            <th>Status</th>
-                                            <th>Schedule</th>
+                                            <th>Email</th>
+                                            <th>City</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
                                     
                                     <tfoot>
                                         <tr>
-                                            <th>First Name</th>
-                                            <th>Last Name</th>
                                             <th>User Name</th>
-                                            <th>User Type</th>
-                                            <th>Status</th>
-                                            <th>Schedule</th>
+                                            <th>Email</th>
+                                            <th>City</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>
@@ -62,7 +56,7 @@
     width: 1%;}
 
 </style>
-<input type="hidden" id="current_user_id" value="0">
+<input type="hidden" id="current_request_id_id" value="0">
 <div class="modal fade" id="confirm-delete" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="display: none;" aria-hidden="true">
 <div class="modal-dialog" role="document">
     <div class="modal-content">

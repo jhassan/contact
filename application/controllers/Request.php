@@ -19,6 +19,7 @@ class Request extends CI_Controller {
   //   		return;
   //   	endif;
 		if($this->input->post("action")=="create_request"):
+
 			// Validate Form
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('name', 'Name', 'required|min_length[1]|max_length[100]');
@@ -32,6 +33,7 @@ class Request extends CI_Controller {
             		$message = validation_errors();
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
             	else:
+
             	// Insert into profile
         		$passport_image = $_FILES["passport_image"]["name"];
         		$fee_recipt_image = $_FILES["fee_recipt_image"]["name"];
@@ -41,15 +43,14 @@ class Request extends CI_Controller {
 			    $config['max_size']      	= 10000;
 			    $this->load->library('upload', $config);
 			    if( ! $this->upload->do_upload('passport_image') && empty($this->input->post("edit_id"))){
-			        $error = array('error' => $this->upload->display_errors());
-			        $this->load->view('request/view_request', $error);
-			    }
-			    else{
-			    	$this->upload->do_upload('passport_image');
-			    	$this->upload->do_upload('fee_recipt_image');
+			        $this->upload->do_upload('passport_image');
 			        $upload_data = $this->upload->data();
-			    }	
-            	// Insert into user
+			    }
+			    if( ! $this->upload->do_upload('fee_recipt_image') && empty($this->input->post("edit_id"))){
+			        $this->upload->do_upload('fee_recipt_image');
+			        $upload_data = $this->upload->data();	
+			    }
+            	// Insert into request
             	$GetInsertArray = array();
             	$GetInsertArray = $this->input->post();
           //   	$permission_checked = $this->input->post('permission');
@@ -80,19 +81,8 @@ class Request extends CI_Controller {
 		if($this->input->post("action")=="edit_user"):
 
 			// Validate Form
-			$this->load->library('form_validation');
-			$this->form_validation->set_rules('fname', 'First Name', 'required|min_length[1]|max_length[100]');
-			$this->form_validation->set_rules('lname', 'Last Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[1]|max_length[20]');
-            $this->form_validation->set_rules('user_type_id', 'User Type', 'required');
-            //$this->form_validation->set_rules('password', 'Password', 'required');
-            $this->form_validation->set_rules('phone', 'Phone', 'required|min_length[1]|max_length[14]');
-            $this->form_validation->set_rules('address', 'Address', 'required|min_length[1]|max_length[255]');
-            $this->form_validation->set_rules('email', 'Email', 'required|min_length[1]|max_length[30]|callback_check_edit_email');
-            $this->form_validation->set_rules('basic_salary', 'Basic Salry', 'required');
-            $this->form_validation->set_rules('kpi', 'KPI', 'required');
-            $this->form_validation->set_rules('total_hours', 'Total Hours', 'required');
-            $this->form_validation->set_rules('rate_per_hour', 'Rate per Hour', 'required');
+			$this->form_validation->set_rules('name', 'Name', 'required|min_length[1]|max_length[100]');
+            $this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
             if ($this->form_validation->run() === FALSE):
             		$message = validation_errors();
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
@@ -106,20 +96,20 @@ class Request extends CI_Controller {
         		// $GetUpdateArray['arrayChickList'] = $arrayChickList;
         		//var_dump($GetUpdateArray["edit_id"]); die;
         		$edit_id = $GetUpdateArray["edit_id"];
-            	$UpdateArray 		= $this->User_Model->update_user($GetUpdateArray, $edit_id);
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Updated Successfully"));
-            	redirect(site_url("user/view_user"));
+            	$UpdateArray 		= $this->Request_Model->update_request($GetUpdateArray, $edit_id);
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully"));
+            	redirect(site_url("request/view_request"));
             endif;
 		endif;
 		// Select data for edit
-		$EditCustomerArray = $this->User_Model->select_user_edit($edit_id);
+		$EditCustomerArray = $this->Request_Model->select_request_edit($edit_id);
 		// $this->data["patentPermission"]		= $this->User_Model->parent_permissions();
 		// $this->data["childPermission"]		= $this->User_Model->child_permissions();
 		// $this->data["user_permission"] 		= $this->User_Model->get_login_user_info($edit_id);
-		$this->data["edit_user"]			=	$EditCustomerArray;
-		$this->data["title"]				=	"Edit User";
+		$this->data["edit_request"]			=	$EditCustomerArray;
+		$this->data["title"]				=	"Edit Request";
 		$this->load->view("crm-app/includes/header", $this->data);
-		$this->load->view("crm-app/user/edit_user", $this->data);
+		$this->load->view("crm-app/request/edit_request", $this->data);
 		$this->load->view("crm-app/includes/footer", $this->data);
 	}
 	public function view_request()

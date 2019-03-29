@@ -50,6 +50,7 @@ class User_Model extends CI_Model {
         $data = array(
             'fname'        => $data_array['fname'],
             'lname'        => $data_array['lname'],
+            'username'     => $data_array['username'],
             'password'     => md5($data_array['password']),
             'email'        => $data_array['email'],
             'created_at'   => date("Y-m-d H:i:s")

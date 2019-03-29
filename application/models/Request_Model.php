@@ -47,23 +47,12 @@ class Request_Model extends CI_Model {
         $this->localdb->insert('chr_requests', $data);
     }
 
-    public function get_user($draw, $page_number, $limit, $search, $order, $min, $max)
+    public function get_request($draw, $page_number, $limit, $search, $order, $min, $max)
     {
-        $this->localdb->select("*, us.id as id, 
-                CASE 
-                    WHEN user_type_id = 1 THEN 'Staff' 
-                    WHEN user_type_id = 2 THEN 'Client' 
-                    WHEN user_type_id = 3 THEN 'Agent' 
-                END AS user_type_id,
-                CASE 
-                    WHEN status = 0 THEN 'Enable' 
-                    WHEN status = 1 THEN 'Disable'
-                END AS status,
-                CONCAT(`time_in`,' - ', `time_out`) AS schedule");
-        $this->localdb->from('chr_users us');
-        $this->localdb->join('chr_schedules sch', 'sch.id=us.schedule_id', 'inner');
+        $this->localdb->select("*");
+        $this->localdb->from('chr_requests');
         // $this->localdb->where('is_active', 0);
-        $this->localdb->where('us.is_deleted', 0);
+        $this->localdb->where('is_deleted', 0);
         $this->localdb->limit($limit);
         $this->localdb->offset($page_number);
         if(isset($min) && $min!="" && isset($max) && $max!=""):
@@ -74,13 +63,13 @@ class Request_Model extends CI_Model {
             $this->localdb->where($where);
         endif;
         if(isset($search["value"]) && $search["value"]!=""):
-            $this->localdb->like("fname", $search["value"]);
+            $this->localdb->like("name", $search["value"]);
         endif;
         if(isset($order[0]["column"])):
             $order_by = "";
             switch($order[0]["column"]) {
                 case 0:
-                    $order_by = "us.`id`";
+                    $order_by = "`id`";
                 break;
             }
         $this->localdb->order_by($order_by, $order[0]["dir"]);
@@ -96,17 +85,15 @@ class Request_Model extends CI_Model {
             $this->localdb->where($where);
         endif;
         if(isset($search["value"]) && $search["value"]!=""):
-            $this->localdb->like("fname", $search["value"]);
+            $this->localdb->like("name", $search["value"]);
         endif;
-        $this->localdb->where('us.status', 0);
-        $this->localdb->where('us.is_deleted', 0);
-        $rows_count = $this->localdb->count_all_results("chr_users us");
+        $this->localdb->where('is_deleted', 0);
+        $rows_count = $this->localdb->count_all_results("chr_requests");
         if(isset($search["value"]) && $search["value"]!=""):
-            $this->localdb->like("fname", $search["value"]);
+            $this->localdb->like("name", $search["value"]);
         endif;
-        $this->localdb->where('us.status', 0);
-        $this->localdb->where('us.is_deleted', 0);
-        $rows_total = $this->localdb->count_all_results("chr_users us");
+        $this->localdb->where('is_deleted', 0);
+        $rows_total = $this->localdb->count_all_results("chr_requests");
         foreach($user_result as $key => $user):
             $user_result[$key]->DT_RowId = $user->id;
         endforeach;
@@ -118,13 +105,13 @@ class Request_Model extends CI_Model {
         );
         return $user_result;
     }
-    // select user data for edit
-    public function select_user_edit($edit_id)
+    // select request data for edit
+    public function select_request_edit($edit_id)
     {
         if (!empty($edit_id)):
             $array = array('id' => (int)$edit_id);
             $this->localdb->select('*'); 
-            $this->localdb->from('chr_users');
+            $this->localdb->from('chr_requests');
             $this->localdb->where($array); 
             $query = $this->localdb->get();
             $rows = $query->result();

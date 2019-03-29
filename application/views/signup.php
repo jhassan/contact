@@ -52,6 +52,9 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <input class="form-control" name="username" placeholder="User Name" type="text">
+                                    </div>
+                                    <div class="form-group">
                                         <input class="form-control" name="email" placeholder="Email" type="email">
                                     </div>
                                     <div class="form-group">

@@ -242,9 +242,9 @@ else
             });
 
             // Get all groups list
-            var $table = jQuery('#show_list_groups').DataTable({
+            var $table = jQuery('#show_list_requests').DataTable({
               "ajax": {
-                    "url": "<?php echo base_url('ajax/view_group');?>",
+                    "url": "<?php echo base_url('ajax/view_request');?>",
                      "type": "POST",
                 },
               "processing": true,
@@ -252,35 +252,37 @@ else
               "paging": true,
               "order": [[ 0, "desc" ]],
               "columns" : [
-                { "data" : "group_name" },
+                { "data" : "name" },
+                { "data" : "email" },
+                { "data" : "city" },
               ],
               "columnDefs": [ {
                 "data" : "id",
                       "render": function ( data, type, row ) {
                                 return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
                         },
-                        "targets": 1
+                        "targets": 3
                   } ], 
             });
             // Delete record
-            $('#show_list_groups tbody').on( 'click', 'button.delete_button', function () {
-                var user_id = $(this).closest('tr').attr('id');
-                $("#current_group_id").val(user_id);
+            $('#show_list_requests tbody').on( 'click', 'button.delete_button', function () {
+                var request_id = $(this).closest('tr').attr('id');
+                $("#current_request_id").val(request_id);
             } );
             // Edit record
-            $('#show_list_groups tbody').on( 'click', 'button.edit_button', function () {
+            $('#show_list_requests tbody').on( 'click', 'button.edit_button', function () {
                 var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("group/edit_group"); ?>/" + edit_id;
+                window.location = "<?php echo site_url("request/edit_request"); ?>/" + edit_id;
             } );
             // Delete Group
-            $("#delete_group_record").on('click', function (){
-                var delete_id = $("#current_group_id").val();
+            $("#delete_request_record").on('click', function (){
+                var delete_id = $("#current_request_id").val();
                   $.ajax({
-                      url: "<?php echo base_url('group/delete_group');?>",
+                      url: "<?php echo base_url('request/delete_request');?>",
                       type: "POST",
                       data: {delete_id: delete_id} ,
                       success: function (response) {
-                          window.location = "view_group";
+                          window.location = "view_request";
                       },
                       error: function(jqXHR, textStatus, errorThrown) {
                          console.log(textStatus, errorThrown);
