@@ -59,3 +59,8 @@ ERROR - 2019-03-29 20:10:00 --> Severity: error --> Exception: Call to undefined
 ERROR - 2019-03-29 20:12:28 --> Severity: error --> Exception: Call to undefined function get_groups() E:\xampp\htdocs\contact\application\views\crm-app\user\edit_user.php 72
 ERROR - 2019-03-29 20:14:18 --> 404 Page Not Found: Attendance/user_time_status
 ERROR - 2019-03-29 20:15:10 --> 404 Page Not Found: Attendance/user_time_status
+ERROR - 2019-03-29 20:17:07 --> 404 Page Not Found: Faviconico/index
+ERROR - 2019-03-29 20:30:36 --> 404 Page Not Found: Assets/vendors
+ERROR - 2019-03-29 20:30:36 --> 404 Page Not Found: Assets/vendors
+ERROR - 2019-03-29 20:30:36 --> 404 Page Not Found: Assets/vendors
+ERROR - 2019-03-29 20:30:36 --> 404 Page Not Found: Assets/dist
