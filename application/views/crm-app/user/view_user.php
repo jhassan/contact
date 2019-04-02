@@ -29,7 +29,6 @@
                                             <th>User Name</th>
                                             <th>User Type</th>
                                             <th>Status</th>
-                                            <th>Schedule</th>
                                             <th>Action</th>
                                         </tr>
                                     </thead>
@@ -41,7 +40,6 @@
                                             <th>User Name</th>
                                             <th>User Type</th>
                                             <th>Status</th>
-                                            <th>Schedule</th>
                                             <th>Action</th>
                                         </tr>
                                     </tfoot>

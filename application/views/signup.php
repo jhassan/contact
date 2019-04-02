@@ -45,17 +45,17 @@
                                     <p class="mb-30 text-center">Create your account and start your free trial today</p>
                                     <div class="form-row">
                                         <div class="col-md-6 form-group">
-                                            <input class="form-control" name="fname" placeholder="First name" value="" type="text">
+                                            <input class="form-control" name="fname" placeholder="First name" value="<?php echo set_value('fname'); ?>" type="text">
                                         </div>
                                         <div class="col-md-6 form-group">
-                                            <input class="form-control" name="lname" placeholder="Last name" value="" type="text">
+                                            <input class="form-control" name="lname" placeholder="Last name" value="<?php echo set_value('lname'); ?>" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" name="username" placeholder="User Name" type="text">
+                                        <input class="form-control" name="username" placeholder="User Name" type="text" value="<?php echo set_value('username'); ?>">
                                     </div>
                                     <div class="form-group">
-                                        <input class="form-control" name="email" placeholder="Email" type="email">
+                                        <input class="form-control" name="email" placeholder="Email" type="email" value="<?php echo set_value('email'); ?>">
                                     </div>
                                     <div class="form-group">
                                         <input class="form-control" name="password" placeholder="Password" type="password">

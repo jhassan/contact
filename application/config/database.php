@@ -76,8 +76,8 @@ $query_builder = TRUE;
 $db['localdb'] = array(
 	'dsn'	=> '',
 	'hostname' => 'localhost',
-	'username' => 'admin',
-	'password' => 'admin4321',
+	'username' => 'root',
+	'password' => '',
 	'database' => 'contact',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
@@ -98,9 +98,9 @@ $db['localdb'] = array(
 // $db['localdb'] = array(
 // 	'dsn'	=> '',
 // 	'hostname' => 'localhost',
-// 	'username' => 'u726744766_ncrm',
-// 	'password' => 'fnaizcOVLb3C',
-// 	'database' => 'u726744766_nncrm',
+// 	'username' => 'jawadgee_contdoc',
+// 	'password' => '1VGTHraZ#Q8M',
+// 	'database' => 'jawadgee_contactdoc',
 // 	'dbdriver' => 'mysqli',
 // 	'dbprefix' => '',
 // 	'pconnect' => FALSE,
@@ -116,3 +116,5 @@ $db['localdb'] = array(
 // 	'failover' => array(),
 // 	'save_queries' => TRUE
 // );
+
+// Success: You saved “jawadgee_contdoc”’s privileges on the database “jawadgee_contactdoc”.

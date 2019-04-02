@@ -5,13 +5,15 @@ class Request extends CI_Controller {
 	public function __construct() {
 		parent::__construct();
 		$this->load->model("Request_Model");
+		$this->load->model("User_Model");
 		$this->load->helper('form', 'url');
+		
 		$this->data = array(
 			"title"	=>	"Dashboard"
 		);
-		// if($this->User_Model->is_logged_in()===FALSE):
-		// 	redirect(site_url("/"));
-		// endif;
+		if($this->User_Model->is_logged_in()===FALSE):
+			redirect(site_url("/"));
+		endif;
 	}
 	public function create_request(){
 		// if(!in_array("22", $this->permission)):
@@ -23,7 +25,8 @@ class Request extends CI_Controller {
 			// Validate Form
 			$this->load->library('form_validation');
 			$this->form_validation->set_rules('name', 'Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
+            //$this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
+            $this->form_validation->set_rules('email', 'Email', 'required');
    //          if (empty($_FILES['user_image']['name']))
 			// {
 			//     $this->form_validation->set_rules('user_image', 'User Image', 'required');
@@ -37,7 +40,8 @@ class Request extends CI_Controller {
             	// Insert into profile
         		$passport_image = $_FILES["passport_image"]["name"];
         		$fee_recipt_image = $_FILES["fee_recipt_image"]["name"];
-        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/contact/uploads/user_images/';
+        		// $uploadpath = $_SERVER['DOCUMENT_ROOT'].'/contact/uploads/user_images/';
+        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/uploads/user_images/';
         		$config['upload_path'] 		= $uploadpath; 
 			    $config['allowed_types'] 	= 'gif|jpg|png|jpeg';
 			    $config['max_size']      	= 10000;
@@ -59,7 +63,32 @@ class Request extends CI_Controller {
         		$GetInsertArray['passport_image'] = trim($passport_image);
         		$GetInsertArray['fee_recipt_image'] = trim($fee_recipt_image);
             	$this->Request_Model->insert_request($GetInsertArray);
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully"));
+            	// send email
+            	$this->load->library('email');
+            	$config['protocol'] = 'sendmail';
+				$config['mailpath'] = '/usr/sbin/sendmail';
+				$config['charset'] = 'iso-8859-1';
+				$config['wordwrap'] = TRUE;
+
+				$this->email->initialize($config);
+				$this->email->from('mugheesch@gmail.com ', 'Doctor');
+				$this->email->to('mugheesch@gmail.com ');
+
+				$this->email->subject('Email Test');
+				$this->email->message('Testing the email class.');
+
+				$this->email->send();
+				if ( ! $this->email->send())
+				{
+				        // Generate error
+					$msg = "Email not sent";
+				}
+				else
+				{
+					$msg = "Email sent";
+				}
+				//echo $this->email->print_debugger();
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully" ));
             	redirect(site_url("request/view_request"));
             endif;
 		endif;
@@ -78,15 +107,34 @@ class Request extends CI_Controller {
   //   		return;
   //   	endif;
 		//var_dump($this->input->post("action"));
-		if($this->input->post("action")=="edit_user"):
+		if($this->input->post("action")=="edit_request"):
 
 			// Validate Form
+			$this->load->library('form_validation');
 			$this->form_validation->set_rules('name', 'Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
+            //$this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
+            $this->form_validation->set_rules('email', 'Email', 'required');
             if ($this->form_validation->run() === FALSE):
             		$message = validation_errors();
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
             	else:
+            	// update image
+        		$passport_image = $_FILES["passport_image"]["name"];
+        		$fee_recipt_image = $_FILES["fee_recipt_image"]["name"];
+        		//$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/contact/uploads/user_images/';
+        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/uploads/user_images/';
+        		$config['upload_path'] 		= $uploadpath; 
+			    $config['allowed_types'] 	= 'gif|jpg|png|jpeg';
+			    $config['max_size']      	= 10000;
+			    $this->load->library('upload', $config);
+			    if( ! $this->upload->do_upload('passport_image') && !empty($this->input->post("edit_id"))){
+			        $this->upload->do_upload('passport_image');
+			        $upload_data = $this->upload->data();
+			    }
+			    if( ! $this->upload->do_upload('fee_recipt_image') && !empty($this->input->post("edit_id"))){
+			        $this->upload->do_upload('fee_recipt_image');
+			        $upload_data = $this->upload->data();	
+			    }	
             	// Update user
             	$GetUpdateArray 	= array();
             	$GetUpdateArray 	= $this->input->post();
@@ -96,7 +144,25 @@ class Request extends CI_Controller {
         		// $GetUpdateArray['arrayChickList'] = $arrayChickList;
         		//var_dump($GetUpdateArray["edit_id"]); die;
         		$edit_id = $GetUpdateArray["edit_id"];
+        		$GetUpdateArray['passport_image'] = trim($passport_image);
+        		$GetUpdateArray['fee_recipt_image'] = trim($fee_recipt_image);
             	$UpdateArray 		= $this->Request_Model->update_request($GetUpdateArray, $edit_id);
+            	// send email
+            	
+            	$this->load->library('email');
+            	$config['protocol'] = 'sendmail';
+				$config['mailpath'] = '/usr/sbin/sendmail';
+				$config['charset'] = 'iso-8859-1';
+				$config['wordwrap'] = TRUE;
+
+				$this->email->initialize($config);
+				$this->email->from('mugheesch@gmail.com ', 'Doctor');
+				$this->email->to($this->input->post('email'));
+
+				$this->email->subject('Email Test for when admin post response');
+				$this->email->message('Email body for admin post response');
+
+				$this->email->send();
             	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully"));
             	redirect(site_url("request/view_request"));
             endif;
@@ -160,9 +226,14 @@ class Request extends CI_Controller {
 	public function delete_request()
 	{
 		$delete_id = $this->input->post("delete_id");
-		$this->User_Model->delete_user($delete_id);
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Deleted Successfully"));
-            	redirect(site_url("user/view_user"));
+		$this->Request_Model->delete_request($delete_id);
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Deleted Successfully"));
+            	redirect(site_url("request/view_request"));
+	}
+	public function get_request_response(){
+		$request_id = $this->input->post("request_id");
+		echo $this->Request_Model->request_response($request_id);
+        
 	}
 	public function user_login_check($str) {
 		if($this->User_Model->do_login($this->input->post("username"), $this->input->post("password"))===TRUE):

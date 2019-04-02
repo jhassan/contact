@@ -17,7 +17,8 @@ class User_Model extends CI_Model {
     public function do_login($name, $password) {
     	$where = array (
     		"username"		=>	$name,
-    		"password"	=>	md5($password)
+            "status"        =>  0,
+    		"password"	    =>	md5($password)
     	);
     	$query = $this->localdb->get_where("chr_users", $where);
     	if($query->num_rows()==1):
@@ -47,10 +48,15 @@ class User_Model extends CI_Model {
     }
     public function insert_signup($data_array)
     {
+        if(isset($data_array['status']))
+            $data_array['status'] = $data_array['status'];
+        else
+            $data_array['status'] = 0;
         $data = array(
             'fname'        => $data_array['fname'],
             'lname'        => $data_array['lname'],
             'username'     => $data_array['username'],
+            'status'       => $data_array['status'],
             'password'     => md5($data_array['password']),
             'email'        => $data_array['email'],
             'created_at'   => date("Y-m-d H:i:s")
@@ -60,21 +66,18 @@ class User_Model extends CI_Model {
 
     public function get_user($draw, $page_number, $limit, $search, $order, $min, $max)
     {
-        $this->localdb->select("*, us.id as id, 
+        $this->localdb->select("*, 
                 CASE 
-                    WHEN user_type_id = 1 THEN 'Staff' 
-                    WHEN user_type_id = 2 THEN 'Client' 
-                    WHEN user_type_id = 3 THEN 'Agent' 
-                END AS user_type_id,
+                    WHEN user_type = 1 THEN 'Admin' 
+                    WHEN user_type = 0 THEN 'User' 
+                END AS user_type,
                 CASE 
                     WHEN status = 0 THEN 'Enable' 
                     WHEN status = 1 THEN 'Disable'
-                END AS status,
-                CONCAT(`time_in`,' - ', `time_out`) AS schedule");
-        $this->localdb->from('chr_users us');
-        $this->localdb->join('chr_schedules sch', 'sch.id=us.schedule_id', 'inner');
+                END AS status");
+        $this->localdb->from('chr_users');
         // $this->localdb->where('is_active', 0);
-        $this->localdb->where('us.is_deleted', 0);
+        $this->localdb->where('is_deleted', 0);
         $this->localdb->limit($limit);
         $this->localdb->offset($page_number);
         if(isset($min) && $min!="" && isset($max) && $max!=""):
@@ -91,7 +94,7 @@ class User_Model extends CI_Model {
             $order_by = "";
             switch($order[0]["column"]) {
                 case 0:
-                    $order_by = "us.`id`";
+                    $order_by = "`id`";
                 break;
             }
         $this->localdb->order_by($order_by, $order[0]["dir"]);
@@ -109,15 +112,15 @@ class User_Model extends CI_Model {
         if(isset($search["value"]) && $search["value"]!=""):
             $this->localdb->like("fname", $search["value"]);
         endif;
-        $this->localdb->where('us.status', 0);
-        $this->localdb->where('us.is_deleted', 0);
-        $rows_count = $this->localdb->count_all_results("chr_users us");
+        $this->localdb->where('status', 0);
+        $this->localdb->where('is_deleted', 0);
+        $rows_count = $this->localdb->count_all_results("chr_users");
         if(isset($search["value"]) && $search["value"]!=""):
             $this->localdb->like("fname", $search["value"]);
         endif;
-        $this->localdb->where('us.status', 0);
-        $this->localdb->where('us.is_deleted', 0);
-        $rows_total = $this->localdb->count_all_results("chr_users us");
+        $this->localdb->where('status', 0);
+        $this->localdb->where('is_deleted', 0);
+        $rows_total = $this->localdb->count_all_results("chr_users");
         foreach($user_result as $key => $user):
             $user_result[$key]->DT_RowId = $user->id;
         endforeach;
@@ -152,46 +155,22 @@ class User_Model extends CI_Model {
          //var_dump($edit_id); die;
         if(empty($data_array['password'])):
             $data = array(
-            'fname'         => $data_array['fname'],
-            'lname'         => $data_array['lname'],
-            'username'      => $data_array['username'],
-            'user_type_id'  => $data_array['user_type_id'],  
-            'schedule_id'   => $data_array['schedule_id'],  
-            'phone'         => $data_array['phone'],
-            'cnic'          => $data_array['cnic'],
-            'address'       => $data_array['address'],
-            'email'         => $data_array['email'],
-            'status'        => $data_array['status'],
-            'group_id'      => $data_array['group_id'],
-            'address'       => $data_array['address'],
-            'basic_salary'  => $data_array['basic_salary'],
-            'kpi'           => $data_array['kpi'],
-            'total_hours'   => $data_array['total_hours'],
-            'rate_per_hour' => $data_array['rate_per_hour'],
-            //'user_permissions'  => $data_array['arrayChickList'],
-            'updated_at'    => date("Y-m-d H:i:s")
+            'fname'        => $data_array['fname'],
+            'lname'        => $data_array['lname'],
+            'username'     => $data_array['username'],
+            'status'       => $data_array['status'],
+            'email'        => $data_array['email'],
+            'updated_at'   => date("Y-m-d H:i:s")
         );
         else:
             $data = array(
-            'fname'         => $data_array['fname'],
-            'lname'         => $data_array['lname'],
-            'username'      => $data_array['username'],
-            'password'      => md5($data_array['password']),
-            'user_type_id'  => $data_array['user_type_id'],  
-            'schedule_id'   => $data_array['schedule_id'],  
-            'phone'         => $data_array['phone'],
-            'cnic'          => $data_array['cnic'],
-            'address'       => $data_array['address'],
-            'email'         => $data_array['email'],
-            'status'        => $data_array['status'],
-            'group_id'      => $data_array['group_id'],
-            'address'       => $data_array['address'],
-            'basic_salary'  => $data_array['basic_salary'],
-            'kpi'           => $data_array['kpi'],
-            'total_hours'   => $data_array['total_hours'],
-            'rate_per_hour' => $data_array['rate_per_hour'],
-            //'user_permissions'  => $data_array['arrayChickList'],
-            'updated_at'    => date("Y-m-d H:i:s")
+            'fname'        => $data_array['fname'],
+            'lname'        => $data_array['lname'],
+            'username'     => $data_array['username'],
+            'status'       => $data_array['status'],
+            'password'     => md5($data_array['password']),
+            'email'        => $data_array['email'],
+            'updated_at'   => date("Y-m-d H:i:s")
         );
         endif;    
         

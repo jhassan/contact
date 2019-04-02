@@ -31,6 +31,7 @@ class Request_Model extends CI_Model {
             'name'          => $data_array['name'],
             'gender'        => $data_array['gender'],
             'age'           => $data_array['age'],
+            'user_id'       => (int)$this->session->user_id,
             'city'          => $data_array['city'],
             'country_id'    => $data_array['country_id'],
             'cnic'          => $data_array['cnic'],
@@ -49,21 +50,33 @@ class Request_Model extends CI_Model {
 
     public function get_request($draw, $page_number, $limit, $search, $order, $min, $max)
     {
+        //var_dump($min."***".$max."----".$contact_no);
+        if($this->session->user_type == 0):
+            $whereRequest = array (
+                "user_id" => (int)$this->session->user_id,
+                "is_deleted" => 0
+            );
+        else:
+            $whereRequest = array (
+                "is_deleted" => 0
+            );    
+        endif;    
         $this->localdb->select("*");
         $this->localdb->from('chr_requests');
         // $this->localdb->where('is_active', 0);
-        $this->localdb->where('is_deleted', 0);
+        $this->localdb->where($whereRequest);
         $this->localdb->limit($limit);
         $this->localdb->offset($page_number);
         if(isset($min) && $min!="" && isset($max) && $max!=""):
             $where = array (
-                "CAST(id as UNSIGNED) >" => $min,
-                "CAST(id as UNSIGNED) <" => $max,
+                ' DATE_FORMAT(`created_at`, "%Y-%m-%d") >=' => date("Y-m-d", strtotime($min)),
+                ' DATE_FORMAT(`created_at`, "%Y-%m-%d") <=' => date("Y-m-d", strtotime($max)),
             );
             $this->localdb->where($where);
         endif;
         if(isset($search["value"]) && $search["value"]!=""):
             $this->localdb->like("name", $search["value"]);
+            $this->localdb->or_like("contact", $search["value"]);
         endif;
         if(isset($order[0]["column"])):
             $order_by = "";
@@ -79,20 +92,22 @@ class Request_Model extends CI_Model {
         $user_result = $query->result();
         if(isset($min) && $min!="" && isset($max) && $max!=""):
             $where = array (
-                "CAST(id as UNSIGNED) >" => $min,
-                "CAST(id as UNSIGNED) <" => $max,
+                ' DATE_FORMAT(`created_at`, "%Y-%m-%d") >=' => date("Y-m-d", strtotime($min)),
+                ' DATE_FORMAT(`created_at`, "%Y-%m-%d") <=' => date("Y-m-d", strtotime($max)),
             );
             $this->localdb->where($where);
         endif;
         if(isset($search["value"]) && $search["value"]!=""):
             $this->localdb->like("name", $search["value"]);
+            $this->localdb->or_like("contact", $search["value"]);
         endif;
-        $this->localdb->where('is_deleted', 0);
+        $this->localdb->where($whereRequest);
         $rows_count = $this->localdb->count_all_results("chr_requests");
         if(isset($search["value"]) && $search["value"]!=""):
             $this->localdb->like("name", $search["value"]);
+            $this->localdb->or_like("contact", $search["value"]);
         endif;
-        $this->localdb->where('is_deleted', 0);
+        $this->localdb->where($whereRequest);
         $rows_total = $this->localdb->count_all_results("chr_requests");
         foreach($user_result as $key => $user):
             $user_result[$key]->DT_RowId = $user->id;
@@ -123,65 +138,91 @@ class Request_Model extends CI_Model {
         endif;
     }
 
-    public function update_user($data_array, $edit_id)
+    public function update_request($data_array, $edit_id)
     {
          //var_dump($edit_id); die;
-        if(empty($data_array['password'])):
+        if(empty($data_array['passport_image']) && empty($data_array['fee_recipt_image'])):
             $data = array(
-            'fname'         => $data_array['fname'],
-            'lname'         => $data_array['lname'],
-            'username'      => $data_array['username'],
-            'user_type_id'  => $data_array['user_type_id'],  
-            'schedule_id'   => $data_array['schedule_id'],  
-            'phone'         => $data_array['phone'],
+            'name'          => $data_array['name'],
+            'gender'        => $data_array['gender'],
+            'age'           => $data_array['age'],
+            'updatd_by'     => (int)$this->session->user_id,
+            'city'          => $data_array['city'],
+            'country_id'    => $data_array['country_id'],
             'cnic'          => $data_array['cnic'],
-            'address'       => $data_array['address'],
+            'passport'      => $data_array['passport'],
             'email'         => $data_array['email'],
-            'status'        => $data_array['status'],
-            'group_id'      => $data_array['group_id'],
-            'address'       => $data_array['address'],
-            'basic_salary'  => $data_array['basic_salary'],
-            'kpi'           => $data_array['kpi'],
-            'total_hours'   => $data_array['total_hours'],
-            'rate_per_hour' => $data_array['rate_per_hour'],
-            //'user_permissions'  => $data_array['arrayChickList'],
-            'updated_at'    => date("Y-m-d H:i:s")
+            'contact'       => $data_array['contact'],
+            'course'        => $data_array['course'],
+            'duration'      => $data_array['duration'],
+            'admin_notes'   => $data_array['admin_notes'],
+            'address'          => $data_array['address'],
+            'created_at'   => date("Y-m-d H:i:s")
         );
-        else:
+        elseif(!empty($data_array['passport_image'])):
             $data = array(
-            'fname'         => $data_array['fname'],
-            'lname'         => $data_array['lname'],
-            'username'      => $data_array['username'],
-            'password'      => md5($data_array['password']),
-            'user_type_id'  => $data_array['user_type_id'],  
-            'schedule_id'   => $data_array['schedule_id'],  
-            'phone'         => $data_array['phone'],
+            'name'          => $data_array['name'],
+            'updatd_by'     => (int)$this->session->user_id,
+            'gender'        => $data_array['gender'],
+            'age'           => $data_array['age'],
+            'city'          => $data_array['city'],
+            'country_id'    => $data_array['country_id'],
             'cnic'          => $data_array['cnic'],
-            'address'       => $data_array['address'],
+            'passport'      => $data_array['passport'],
             'email'         => $data_array['email'],
-            'status'        => $data_array['status'],
-            'group_id'      => $data_array['group_id'],
-            'address'       => $data_array['address'],
-            'basic_salary'  => $data_array['basic_salary'],
-            'kpi'           => $data_array['kpi'],
-            'total_hours'   => $data_array['total_hours'],
-            'rate_per_hour' => $data_array['rate_per_hour'],
-            //'user_permissions'  => $data_array['arrayChickList'],
-            'updated_at'    => date("Y-m-d H:i:s")
+            'contact'       => $data_array['contact'],
+            'course'        => $data_array['course'],
+            'duration'      => $data_array['duration'],
+            'admin_notes'   => $data_array['admin_notes'],
+            'passport_image' => $data_array['passport_image'],
+            'address'          => $data_array['address'],
+            'created_at'   => date("Y-m-d H:i:s")
         );
+        elseif(!empty($data_array['fee_recipt_image'])):
+            $data = array(
+            'name'          => $data_array['name'],
+            'gender'        => $data_array['gender'],
+            'updatd_by'     => (int)$this->session->user_id,
+            'age'           => $data_array['age'],
+            'city'          => $data_array['city'],
+            'country_id'    => $data_array['country_id'],
+            'cnic'          => $data_array['cnic'],
+            'passport'      => $data_array['passport'],
+            'email'         => $data_array['email'],
+            'contact'       => $data_array['contact'],
+            'course'        => $data_array['course'],
+            'duration'      => $data_array['duration'],
+            'admin_notes'   => $data_array['admin_notes'],
+            'fee_recipt_image' => $data_array['fee_recipt_image'],
+            'address'          => $data_array['address'],
+            'created_at'   => date("Y-m-d H:i:s")
+        );    
         endif;    
         
         $this->localdb->where('id', $edit_id);
-        $this->localdb->update('chr_users', $data);
+        $this->localdb->update('chr_requests', $data);
     }
 
-    public function delete_user($delete_id)
+    public function delete_request($delete_id)
     {
             $data = array(
             'is_deleted' => 1
             );
         $this->localdb->where('id', $delete_id);
-        $this->localdb->update('chr_users', $data);
+        $this->localdb->update('chr_requests', $data);
+    }
+    public function request_response($request_id){
+        // Get all parents
+        $where = array (
+            "id" => $request_id
+        );
+        $this->localdb->select("admin_notes");
+        $this->localdb->from("chr_requests");
+        $this->localdb->where($where);
+        $query = $this->localdb->get();
+        $results = $query->result();
+        //var_dump($results[0]->admin_notes); die;
+        return $results[0]->admin_notes;   
     }
     public function parent_permissions()
     {
