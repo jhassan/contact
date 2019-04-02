@@ -19,6 +19,7 @@
                         <input type="hidden" name="edit_id" value="<?php echo $edit_request[0]->id; ?>">
                     <div class="col-sm">
                         <div class="row">
+                            <?php if($this->session->user_type == 0): ?>
                             <div class="col-md-4 form-group">
                                 <label for="fname">Name</label>
                                 <input class="form-control" id="name" value="<?php echo $edit_request[0]->name; ?>" name="name" type="text" required="required">
@@ -115,8 +116,10 @@
                                 <label for="cnic">Fee Recipt Image</label>
                                 <input class="form-control" id="fee_recipt_image" value="" name="fee_recipt_image" type="file">
                             </div>
+                            <?php endif; ?>
                         </div>
                         <div class="row">
+                            <?php if($this->session->user_type == 0): ?>
                             <div class="col-md-12 form-group">
                                 <label for="address">Address</label>
                                 <textarea class="form-control" name="address" rows="3" placeholder="Textarea" required="required"><?php echo $edit_request[0]->address; ?></textarea>
@@ -124,6 +127,7 @@
                                     Please enter address.
                                 </div>
                             </div>
+                            <?php endif; ?>
                             <?php if($this->session->user_type == 1): ?>
                             <div class="col-md-12 form-group">
                                 <label for="address">Admin Notes</label>
@@ -132,7 +136,7 @@
                                     Please enter admin notes.
                                 </div>
                             </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
                         </div>
                         <button type="submit" class="btn btn-primary">Save</button>
                     </div>

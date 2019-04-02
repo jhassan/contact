@@ -6,6 +6,7 @@ class User extends CI_Controller {
 		parent::__construct();
 		$this->load->model("User_Model");
 		$this->load->helper('form', 'url');
+		$this->localdb = $this->load->database('localdb', TRUE);
 		$this->data = array(
 			"title"	=>	"Dashboard"
 		);
@@ -160,12 +161,12 @@ class User extends CI_Controller {
 			else:
 				$GetInsertArray = array();
             	$GetInsertArray = $this->input->post();
-          //   	$permission_checked = $this->input->post('permission');
-        		// $arrayChickList = implode(',', $permission_checked);
-        		// $GetInsertArray['arrayChickList'] = $arrayChickList;
-            	$this->User_Model->insert_signup($GetInsertArray);
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
-            	redirect(site_url("request/view_request"));
+            	$last_user_id = $this->User_Model->insert_signup($GetInsertArray);
+            	$this->send_confirmation($last_user_id);
+            	// $this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
+            	// redirect(site_url("request/view_request"));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Please check your email!"));
+            	redirect(site_url("/"));
 			endif;
 		endif;
 		$data = array (
@@ -174,6 +175,61 @@ class User extends CI_Controller {
 		//print_r($data);
 		$this->load->view('signup', $data);
 	}
+
+	function send_confirmation($last_user_id) {
+	  //  get user hash value
+	  if (!empty($last_user_id)):
+            $array = array('id' => (int)$last_user_id);
+            $this->localdb->select('hash'); 
+            $this->localdb->from('chr_users');
+            $this->localdb->where($array); 
+            $query = $this->localdb->get();
+            $rows = $query->result();
+            if ($rows > 0):
+                $hash = $rows[0]->hash;
+            endif;
+        endif;	
+        //var_dump($hash); die;
+      $this->load->library('email');  	//load email library
+      $this->email->from('jawadjee0519@gmail.com', 'My Site'); //sender's email
+      $address = $_POST['email'];	//receiver's email
+      $subject="Welcome to MySite!";	//subject
+      $message= /*-----------email body starts-----------*/
+        'Thanks for signing up, '.$_POST['fname'].'!
+      
+        Your account has been created. 
+        Here are your login details.
+        -------------------------------------------------
+        Email   : ' . $_POST['email'] . '
+        Password: ' . $_POST['password'] . '
+        -------------------------------------------------
+                        
+        Please click this link to activate your account:
+            
+        ' . base_url() . 'user/verify?' . 
+        'email=' . $_POST['email'] . '&hash=' . $hash ;
+		/*-----------email body ends-----------*/		      
+      $this->email->to($address);
+      $this->email->subject($subject);
+      $this->email->message($message);
+      $this->email->send();
+    }
+
+    public function verify() {
+    	 //var_dump($_GET['email']); die;
+         $db_hash = $this->User_Model->get_hash_value($_GET['email']); //get the hash value which belongs to given email from database
+         if($db_hash){ 
+            if($db_hash == $_GET['hash']){  //check whether the input hash value matches the hash value retrieved from the database
+                $this->User_Model->verify_user($_GET['email']); //update the status of the user as verified
+                /*---Now you can redirect the user to whatever page you want---*/
+                $this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Successfully Activated!"));
+            	redirect(site_url("/"));
+            }
+            else{
+            	echo "not verified";
+            }
+         }
+    }
 
 	public function delete_user()
 	{

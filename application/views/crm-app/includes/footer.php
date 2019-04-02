@@ -270,17 +270,17 @@ else
               "columnDefs": [ {
                 "data" : "id",
                       "render": function ( data, type, row ) {
-                                <?php if($this->session->user_type == 1): ?>
+                                <?php //if($this->session->user_type == 1): ?>
                                 return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                                <?php else: ?>
-                                  return "";
-                                <?php endif; ?>  
+                                <?php //else: ?>
+                                  //return "";
+                                <?php //endif; ?>  
                         },
-                        <?php if($this->session->user_type == 1): ?>
+                        <?php //if($this->session->user_type == 1): ?>
                           "targets": 5
-                        <?php else: ?>
-                          "targets": 4
-                        <?php endif; ?>    
+                        <?php //else: ?>
+                          //"targets": 4
+                        <?php //endif; ?>    
                   } ], 
             });
             jQuery('#min, #max').change( function(e) {

@@ -59,9 +59,13 @@ class User_Model extends CI_Model {
             'status'       => $data_array['status'],
             'password'     => md5($data_array['password']),
             'email'        => $data_array['email'],
+            'is_verified'  => 0,
+            'hash'         => md5(rand(0, 1000)),
             'created_at'   => date("Y-m-d H:i:s")
         );
         $this->localdb->insert('chr_users', $data);
+        $insert_id = $this->localdb->insert_id();
+        return  $insert_id;
     }
 
     public function get_user($draw, $page_number, $limit, $search, $order, $min, $max)
@@ -283,6 +287,26 @@ class User_Model extends CI_Model {
         );
     }
 
+    // verify user
+    public function verify_user($email) {
+        $data = array('is_verified' => 1);
+        $this->localdb->where('email', $email);
+        $this->localdb->update('chr_users', $data);
+    }
+
+    // get user hash
+    public function get_hash_value($email){
+        $array = array('email' => $email);
+        $this->localdb->select('hash'); 
+        $this->localdb->from('chr_users');
+        $this->localdb->where($array); 
+        $query = $this->localdb->get();
+        $rows = $query->result();
+        if (count($rows) > 0):
+            $hash = $rows[0]->hash;
+            return $hash;
+        endif;
+    }
     
 }
 

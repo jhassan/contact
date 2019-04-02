@@ -43,9 +43,9 @@
                                             <th>City</th>
                                             <th>Contact</th>
                                             <th>Admin Notes</th>
-                                            <?php if($this->session->user_type == 1): ?>
+                                            <?php //if($this->session->user_type == 1): ?>
                                                 <th>Action</th>
-                                            <?php endif; ?>
+                                            <?php //endif; ?>
                                         </tr>
                                     </thead>
                                     
@@ -56,9 +56,9 @@
                                             <th>City</th>
                                             <th>Contact</th>
                                             <th>Admin Notes</th>
-                                            <?php if($this->session->user_type == 1): ?>
+                                            <?php //if($this->session->user_type == 1): ?>
                                                 <th>Action</th>
-                                            <?php endif; ?>
+                                            <?php //endif; ?>
                                         </tr>
                                     </tfoot>
                                 </table>

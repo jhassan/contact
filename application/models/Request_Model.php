@@ -140,65 +140,72 @@ class Request_Model extends CI_Model {
 
     public function update_request($data_array, $edit_id)
     {
-         //var_dump($edit_id); die;
-        if(empty($data_array['passport_image']) && empty($data_array['fee_recipt_image'])):
+         //var_dump($this->session->user_type); die;
+        if($this->session->user_type == 0):
+            if(empty($data_array['passport_image']) && empty($data_array['fee_recipt_image'])):
+                $data = array(
+                'name'          => $data_array['name'],
+                'gender'        => $data_array['gender'],
+                'age'           => $data_array['age'],
+                'updatd_by'     => (int)$this->session->user_id,
+                'city'          => $data_array['city'],
+                'country_id'    => $data_array['country_id'],
+                'cnic'          => $data_array['cnic'],
+                'passport'      => $data_array['passport'],
+                'email'         => $data_array['email'],
+                'contact'       => $data_array['contact'],
+                'course'        => $data_array['course'],
+                'duration'      => $data_array['duration'],
+                'admin_notes'   => $data_array['admin_notes'],
+                'address'          => $data_array['address'],
+                'created_at'   => date("Y-m-d H:i:s")
+            );
+            elseif(!empty($data_array['passport_image'])):
+                $data = array(
+                'name'          => $data_array['name'],
+                'updatd_by'     => (int)$this->session->user_id,
+                'gender'        => $data_array['gender'],
+                'age'           => $data_array['age'],
+                'city'          => $data_array['city'],
+                'country_id'    => $data_array['country_id'],
+                'cnic'          => $data_array['cnic'],
+                'passport'      => $data_array['passport'],
+                'email'         => $data_array['email'],
+                'contact'       => $data_array['contact'],
+                'course'        => $data_array['course'],
+                'duration'      => $data_array['duration'],
+                'admin_notes'   => $data_array['admin_notes'],
+                'passport_image' => $data_array['passport_image'],
+                'address'          => $data_array['address'],
+                'created_at'   => date("Y-m-d H:i:s")
+            );
+            elseif(!empty($data_array['fee_recipt_image'])):
+                $data = array(
+                'name'          => $data_array['name'],
+                'gender'        => $data_array['gender'],
+                'updatd_by'     => (int)$this->session->user_id,
+                'age'           => $data_array['age'],
+                'city'          => $data_array['city'],
+                'country_id'    => $data_array['country_id'],
+                'cnic'          => $data_array['cnic'],
+                'passport'      => $data_array['passport'],
+                'email'         => $data_array['email'],
+                'contact'       => $data_array['contact'],
+                'course'        => $data_array['course'],
+                'duration'      => $data_array['duration'],
+                'admin_notes'   => $data_array['admin_notes'],
+                'fee_recipt_image' => $data_array['fee_recipt_image'],
+                'address'          => $data_array['address'],
+                'created_at'   => date("Y-m-d H:i:s")
+            );    
+            endif; 
+        else:
             $data = array(
-            'name'          => $data_array['name'],
-            'gender'        => $data_array['gender'],
-            'age'           => $data_array['age'],
-            'updatd_by'     => (int)$this->session->user_id,
-            'city'          => $data_array['city'],
-            'country_id'    => $data_array['country_id'],
-            'cnic'          => $data_array['cnic'],
-            'passport'      => $data_array['passport'],
-            'email'         => $data_array['email'],
-            'contact'       => $data_array['contact'],
-            'course'        => $data_array['course'],
-            'duration'      => $data_array['duration'],
-            'admin_notes'   => $data_array['admin_notes'],
-            'address'          => $data_array['address'],
-            'created_at'   => date("Y-m-d H:i:s")
-        );
-        elseif(!empty($data_array['passport_image'])):
-            $data = array(
-            'name'          => $data_array['name'],
-            'updatd_by'     => (int)$this->session->user_id,
-            'gender'        => $data_array['gender'],
-            'age'           => $data_array['age'],
-            'city'          => $data_array['city'],
-            'country_id'    => $data_array['country_id'],
-            'cnic'          => $data_array['cnic'],
-            'passport'      => $data_array['passport'],
-            'email'         => $data_array['email'],
-            'contact'       => $data_array['contact'],
-            'course'        => $data_array['course'],
-            'duration'      => $data_array['duration'],
-            'admin_notes'   => $data_array['admin_notes'],
-            'passport_image' => $data_array['passport_image'],
-            'address'          => $data_array['address'],
-            'created_at'   => date("Y-m-d H:i:s")
-        );
-        elseif(!empty($data_array['fee_recipt_image'])):
-            $data = array(
-            'name'          => $data_array['name'],
-            'gender'        => $data_array['gender'],
-            'updatd_by'     => (int)$this->session->user_id,
-            'age'           => $data_array['age'],
-            'city'          => $data_array['city'],
-            'country_id'    => $data_array['country_id'],
-            'cnic'          => $data_array['cnic'],
-            'passport'      => $data_array['passport'],
-            'email'         => $data_array['email'],
-            'contact'       => $data_array['contact'],
-            'course'        => $data_array['course'],
-            'duration'      => $data_array['duration'],
-            'admin_notes'   => $data_array['admin_notes'],
-            'fee_recipt_image' => $data_array['fee_recipt_image'],
-            'address'          => $data_array['address'],
-            'created_at'   => date("Y-m-d H:i:s")
-        );    
-        endif;    
-        
+                'updatd_by'     => (int)$this->session->user_id,
+                'admin_notes'   => $data_array['admin_notes'],
+            );    
+        endif;       
+        //var_dump($data); die;
         $this->localdb->where('id', $edit_id);
         $this->localdb->update('chr_requests', $data);
     }
