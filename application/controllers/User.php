@@ -41,57 +41,27 @@ class User extends CI_Controller {
 		$this->load->view('login', $data);
 	}
 	public function create_user(){
-		// if(!in_array("22", $this->permission)):
-  //   		$this->permission_denied();
-  //   		return;
-  //   	endif;
+		if($this->session->user_type == 0):
+    		$this->permission_denied();
+    		return;
+    	endif;
 		if($this->input->post("action")=="create_user"):
 			// Validate Form
-			$this->load->library('form_validation');
-			$this->form_validation->set_rules('fname', 'First Name', 'required|min_length[1]|max_length[100]');
-			$this->form_validation->set_rules('lname', 'Last Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[1]|max_length[20]|is_unique[chr_users.username]');
-            $this->form_validation->set_rules('password', 'Password', 'required');
-            $this->form_validation->set_rules('phone', 'Phone', 'required|min_length[1]|max_length[14]|is_unique[chr_users.phone]');
-            $this->form_validation->set_rules('address', 'Address', 'required|min_length[1]|max_length[255]');
-            $this->form_validation->set_rules('user_type_id', 'User Type', 'required');
-            $this->form_validation->set_rules('email', 'Email', 'min_length[1]|max_length[30]|callback_check_unique_email');
-            $this->form_validation->set_rules('basic_salary', 'Basic Salry', 'required');
-            $this->form_validation->set_rules('kpi', 'KPI', 'required');
-            $this->form_validation->set_rules('total_hours', 'Total Hours', 'required');
-            $this->form_validation->set_rules('rate_per_hour', 'Rate per Hour', 'required');
-   //          if (empty($_FILES['user_image']['name']))
-			// {
-			//     $this->form_validation->set_rules('user_image', 'User Image', 'required');
-			// }
-            
+			$this->load->library("form_validation");
+			$this->form_validation->set_rules("fname", "First Name", "required");
+			$this->form_validation->set_rules("lname", "Last Name", "required");
+			$this->form_validation->set_rules("username", "User Name", "required");
+			$this->form_validation->set_rules('email', 'Email', 'required|min_length[1]|max_length[30]|callback_check_edit_email');
+			$this->form_validation->set_rules("password", "Password", "required");
             if ($this->form_validation->run() === FALSE):
             		$message = validation_errors();
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
             	else:
-            	// Insert into profile
-        		$name = $_FILES["user_image"]["name"];
-        		$uploadpath = $_SERVER['DOCUMENT_ROOT'].'/crm/uploads/user_image/';
-        		$config['upload_path'] 		= $uploadpath; 
-			    $config['allowed_types'] 	= 'gif|jpg|png|jpeg';
-			    $config['max_size']      	= 10000;
-			    $this->load->library('upload', $config);
-			    // if( ! $this->upload->do_upload('user_image') && empty($this->input->post("edit_id"))){
-			    //     $error = array('error' => $this->upload->display_errors());
-			    //     $this->load->view('user/create_user', $error);
-			    // }
-			    // else{
-			    // 	$this->upload->do_upload('user_image');
-			    //     $upload_data = $this->upload->data();
-			    // }	
             	// Insert into user
             	$GetInsertArray = array();
             	$GetInsertArray = $this->input->post();
-          //   	$permission_checked = $this->input->post('permission');
-        		// $arrayChickList = implode(',', $permission_checked);
-        		// $GetInsertArray['arrayChickList'] = $arrayChickList;
         		$GetInsertArray['user_image'] = trim($name);
-            	$this->User_Model->insert_user($GetInsertArray);
+            	$this->User_Model->insert_signup($GetInsertArray);
             	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
             	redirect(site_url("user/view_user"));
             endif;
@@ -105,28 +75,19 @@ class User extends CI_Controller {
 	}
 	public function edit_user($edit_id)
 	{
-		//var_dump($edit_id);
-		// if(!in_array("23", $this->permission)):
-  //   		$this->permission_denied();
-  //   		return;
-  //   	endif;
+		if($this->session->user_type == 0):
+    		$this->permission_denied();
+    		return;
+    	endif;
 		//var_dump($this->input->post("action"));
 		if($this->input->post("action")=="edit_user"):
 
 			// Validate Form
-			$this->load->library('form_validation');
-			$this->form_validation->set_rules('fname', 'First Name', 'required|min_length[1]|max_length[100]');
-			$this->form_validation->set_rules('lname', 'Last Name', 'required|min_length[1]|max_length[100]');
-            $this->form_validation->set_rules('username', 'User Name', 'required|min_length[1]|max_length[20]');
-            $this->form_validation->set_rules('user_type_id', 'User Type', 'required');
-            //$this->form_validation->set_rules('password', 'Password', 'required');
-            $this->form_validation->set_rules('phone', 'Phone', 'required|min_length[1]|max_length[14]');
-            $this->form_validation->set_rules('address', 'Address', 'required|min_length[1]|max_length[255]');
-            $this->form_validation->set_rules('email', 'Email', 'required|min_length[1]|max_length[30]|callback_check_edit_email');
-            $this->form_validation->set_rules('basic_salary', 'Basic Salry', 'required');
-            $this->form_validation->set_rules('kpi', 'KPI', 'required');
-            $this->form_validation->set_rules('total_hours', 'Total Hours', 'required');
-            $this->form_validation->set_rules('rate_per_hour', 'Rate per Hour', 'required');
+			$this->load->library("form_validation");
+			$this->form_validation->set_rules("fname", "First Name", "required");
+			$this->form_validation->set_rules("lname", "Last Name", "required");
+			$this->form_validation->set_rules("username", "User Name", "required");
+			$this->form_validation->set_rules('email', 'Email', 'required|min_length[1]|max_length[30]|callback_check_edit_email');
             if ($this->form_validation->run() === FALSE):
             		$message = validation_errors();
 					$this->session->set_flashdata('message', array("message_type"=>"Error", "message"=>$message));
@@ -158,10 +119,10 @@ class User extends CI_Controller {
 	}
 	public function view_user()
 	{
-		// if(!in_array("24", $this->permission)):
-  //   		$this->permission_denied();
-  //   		return;
-  //   	endif;
+		if($this->session->user_type == 0):
+    		$this->permission_denied();
+    		return;
+    	endif;
 		$this->data["title"]				=	"View User";
 		//$this->data["permission"]			=	$this->permission;
 		$this->load->view("crm-app/includes/header", $this->data);
@@ -170,10 +131,10 @@ class User extends CI_Controller {
 	}
 	public function view_request()
 	{
-		// if(!in_array("24", $this->permission)):
-  //   		$this->permission_denied();
-  //   		return;
-  //   	endif;
+		if($this->session->user_type == 0):
+    		$this->permission_denied();
+    		return;
+    	endif;
 		$this->data["title"]				=	"View User Request";
 		//$this->data["permission"]			=	$this->permission;
 		$this->load->view("crm-app/includes/header", $this->data);
@@ -216,6 +177,10 @@ class User extends CI_Controller {
 
 	public function delete_user()
 	{
+		if($this->session->user_type == 0):
+    		$this->permission_denied();
+    		return;
+    	endif;
 		$delete_id = $this->input->post("delete_id");
 		$this->User_Model->delete_user($delete_id);
             	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Deleted Successfully"));

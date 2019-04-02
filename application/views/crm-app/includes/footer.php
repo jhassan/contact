@@ -203,16 +203,15 @@ else
                 { "data" : "fname" },
                 { "data" : "lname" },
                 { "data" : "username" },
-                { "data" : "user_type_id" },
+                { "data" : "user_type" },
                 { "data" : "status" },
-                { "data" : "schedule" },
               ],
               "columnDefs": [ {
                 "data" : "id",
                       "render": function ( data, type, row ) {
                                 return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
                         },
-                        "targets": 6
+                        "targets": 5
                   } ], 
             });
             // Delete record
@@ -246,6 +245,11 @@ else
               "ajax": {
                     "url": "<?php echo base_url('ajax/view_request');?>",
                      "type": "POST",
+                     "data": function ( d ) {
+                        d.min = jQuery("#min").val(),
+                        d.max = jQuery("#max").val(),
+                        d.contact_no = jQuery("#contact_no").val()
+                      }
                 },
               "processing": true,
               "serverSide": true,
@@ -255,19 +259,58 @@ else
                 { "data" : "name" },
                 { "data" : "email" },
                 { "data" : "city" },
+                { "data" : "contact" },
+                {
+                      "render": function (data, type, JsonResultRow, meta) {
+                          //return '<img width="50" height="50" src="<?php echo base_url(); ?>uploads/portal_logo/'+JsonResultRow.logo+'">';
+                          return '<button class="btn btn-sm btn-primary request_dialog" data-toggle="modal" data-target="#show-request-dialog">View</button>';
+                      }
+                  }
               ],
               "columnDefs": [ {
                 "data" : "id",
                       "render": function ( data, type, row ) {
+                                <?php if($this->session->user_type == 1): ?>
                                 return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
+                                <?php else: ?>
+                                  return "";
+                                <?php endif; ?>  
                         },
-                        "targets": 3
+                        <?php if($this->session->user_type == 1): ?>
+                          "targets": 5
+                        <?php else: ?>
+                          "targets": 4
+                        <?php endif; ?>    
                   } ], 
             });
+            jQuery('#min, #max').change( function(e) {
+                $table.draw()
+            } );
             // Delete record
             $('#show_list_requests tbody').on( 'click', 'button.delete_button', function () {
                 var request_id = $(this).closest('tr').attr('id');
                 $("#current_request_id").val(request_id);
+            } );
+            // Show Dialog Request
+            $('#show_list_requests tbody').on( 'click', 'button.request_dialog', function () {
+                var request_id = $(this).closest('tr').attr('id');
+                $.ajax({
+                      url: "<?php echo base_url('request/get_request_response');?>",
+                      type: "POST",
+                      data: {request_id: request_id} ,
+                      success: function (response) {
+                        // console.log(response); return false;
+                          $("#show_request_response").html();
+                          $("#show_request_response").html(response);
+                          $("#show-request-dialog").modal('show');
+                          //window.location = "view_request";
+                      },
+                      error: function(jqXHR, textStatus, errorThrown) {
+                         console.log(textStatus, errorThrown);
+                      }
+                  });
+                // alert(request_id); show_request_response
+                //$("#current_request_id").val(request_id);
             } );
             // Edit record
             $('#show_list_requests tbody').on( 'click', 'button.edit_button', function () {
@@ -290,331 +333,11 @@ else
                   });
             });
 
-            // Get all portal list
-            var $table = jQuery('#show_list_portals').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_portal');?>",
-                     "type": "POST",
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "portal_name" },
-                  {
-                      "render": function (data, type, JsonResultRow, meta) {
-                          return '<img width="50" height="50" src="<?php echo base_url(); ?>uploads/portal_logo/'+JsonResultRow.logo+'">';
-                      }
-                  }
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-
-                                return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                        },
-                        "targets": 2
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_portals tbody').on( 'click', 'button.delete_button', function () {
-                var portal_id = $(this).closest('tr').attr('id');
-                $("#current_portal_id").val(portal_id);
-            } );
-            // Edit record
-            $('#show_list_portals tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("portal/edit_portal"); ?>/" + edit_id;
-            } );
-            // Delete Portal
-            $("#delete_portal_record").on('click', function (){
-                var delete_id = $("#current_portal_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('portal/delete_portal');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_portal";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // Get all products list
-            var $table = jQuery('#show_list_products').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_product');?>",
-                     "type": "POST",
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "provider_name" },
-                { "data" : "product_name" },
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-                                return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                        },
-                        "targets": 2
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_products tbody').on( 'click', 'button.delete_button', function () {
-                var product_id = $(this).closest('tr').attr('id');
-                $("#current_product_id").val(product_id);
-            } );
-            // Edit record
-            $('#show_list_products tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("product/edit_product"); ?>/" + edit_id;
-            } );
-            // Delete Portal
-            $("#delete_product_record").on('click', function (){
-                var delete_id = $("#current_product_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('product/delete_product');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_product";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-
-            // Get all sales list
-            var $table = jQuery('#show_list_sales').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_sale');?>",
-                     "type": "POST",
-                      "data": function ( d ) {
-                        d.sale_status = jQuery("#sale_status").val()
-                      }
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "status_name" }, 
-                { "data" : "order_date" },
-                { "data" : "account_number" },
-                { "data" : "full_name" },
-                { "data" : "provider_name" },
-                { "data" : "products_name" },
-                { "data" : "group_name" },
-                { "data" : "first_last_name" },
-                { "data" : "portal_name" },
-                { "data" : "install_date" },
-                { "data" : "notes" },
-                { "data" : "admin_notes" },
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-                                return "<button data-toggle='modal' data-target='#status_dialog' class='btn btn-secondary status_button'>Status</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                        },
-                        "targets": 12
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_sales tbody').on( 'click', 'button.delete_button', function () {
-                var sale_id = $(this).closest('tr').attr('id');
-                $("#current_sale_id").val(sale_id);
-            } );
-            // Update Status
-            $('#show_list_sales tbody').on( 'click', 'button.status_button', function () {
-                $("#admin_notes").val('');
-                var sale_id = $(this).closest('tr').attr('id');
-                $("#status_sale_id").val(sale_id);
-                $.ajax({
-                      url: "<?php echo base_url('sale/get_sales_data');?>",
-                      type: "POST",
-                      data: {sale_id: sale_id} ,
-                      dataType: "json",
-                      success: function (response) {
-                        $("#status_id").val(response.status);
-                        $("#admin_notes").val(response.admin_notes);
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            } );
-            // Edit record
-            $('#show_list_sales tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("sale/edit_sale"); ?>/" + edit_id;
-            } );
-            // Delete Sale
-            $("#delete_sale_record").on('click', function (){
-                var delete_id = $("#current_sale_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('sale/delete_sale');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_sale";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // Get all provider list
-            var $table = jQuery('#show_list_providers').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_provider');?>",
-                     "type": "POST",
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "provider_name" },
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-                                return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                        },
-                        "targets": 1
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_providers tbody').on( 'click', 'button.delete_button', function () {
-                var provider_id = $(this).closest('tr').attr('id');
-                $("#current_provider_id").val(provider_id);
-            } );
-            // Edit record
-            $('#show_list_providers tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("provider/edit_provider"); ?>/" + edit_id;
-            } );
-            // Delete Sale
-            $("#delete_provider_record").on('click', function (){
-                var delete_id = $("#current_provider_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('provider/delete_provider');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_provider";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // Get all commission list
-            var $table = jQuery('#show_list_commissions').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_commission');?>",
-                     "type": "POST",
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "provider_name" },
-                { "data" : "product_name" },
-                { "data" : "product_amount" },
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-                                return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;";
-                                // <button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>
-                        },
-                        "targets": 3
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_commissions tbody').on( 'click', 'button.delete_button', function () {
-                var commission_id = $(this).closest('tr').attr('id');
-                $("#current_commission_id").val(commission_id);
-            } );
-            // Edit record
-            $('#show_list_commissions tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("commission/edit_commission"); ?>/" + edit_id;
-            } );
-            // Delete Commission
-            $("#delete_commission_record").on('click', function (){
-                var delete_id = $("#current_commission_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('commission/delete_commission');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_commission";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // Get all schedule list
-            var $table = jQuery('#show_list_schedules').DataTable({
-              "ajax": {
-                    "url": "<?php echo base_url('ajax/view_schedule');?>",
-                     "type": "POST",
-                },
-              "processing": true,
-              "serverSide": true,
-              "paging": true,
-              "order": [[ 0, "desc" ]],
-              "columns" : [
-                { "data" : "time_in" },
-                { "data" : "time_out" },
-              ],
-              "columnDefs": [ {
-                "data" : "id",
-                      "render": function ( data, type, row ) {
-                                return "<button class='btn btn-sm btn-primary edit_button'>Edit</button>&nbsp;&nbsp;&nbsp;<button class='btn btn-sm btn-danger delete_button' data-toggle='modal' data-target='#confirm-delete'>Delete!</button>";
-                        },
-                        "targets": 2
-                  } ], 
-            });
-            // Delete record
-            $('#show_list_schedules tbody').on( 'click', 'button.delete_button', function () {
-                var schedule_id = $(this).closest('tr').attr('id');
-                $("#current_schedule_id").val(schedule_id);
-            } );
-            // Edit record
-            $('#show_list_schedules tbody').on( 'click', 'button.edit_button', function () {
-                var edit_id = $(this).closest('tr').attr('id');
-                window.location = "<?php echo site_url("schedule/edit_schedule"); ?>/" + edit_id;
-            } );
-            // Delete Schedule
-            $("#delete_schedule_record").on('click', function (){
-                var delete_id = $("#current_schedule_id").val();
-                  $.ajax({
-                      url: "<?php echo base_url('schedule/delete_schedule');?>",
-                      type: "POST",
-                      data: {delete_id: delete_id} ,
-                      success: function (response) {
-                          window.location = "view_schedule";
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
+            
             // Date picker
             $(".datepicker").datepicker({ 
                   autoclose: true, 
-                  todayHighlight: true
+                  //todayHighlight: true
             }).datepicker('update', new Date());
             // Date picker for edit
             $(".datepicker_edit").datepicker({ 
@@ -625,128 +348,12 @@ else
             $(".form_datetime").datetimepicker({
                 autoclose: true
               });
-            // Get us city
-            $("#state_id").change(function(){
-                var state_id = $(this).val();
-                $.ajax({
-                      url: "<?php echo base_url('sale/get_cities');?>",
-                      type: "POST",
-                      data: {state_id: state_id} ,
-                      success: function (response) {
-                          $("#us_city").html(response);
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
+            
             });
-            // get sale product against provider
-            $("#sale_provider_id").change(function(){
-                var sale_provider_id = $(this).val();
-                $.ajax({
-                      url: "<?php echo base_url('sale/get_provider_products');?>",
-                      type: "POST",
-                      data: {sale_provider_id: sale_provider_id} ,
-                      success: function (response) {
-                          $("#all_selected_provider_products").html(response);
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // Get all products agains provider
-            $("#provider_id").change(function (){
-              var provider_id = $(this).val();
-              //alert(provider_id);
-                $.ajax({
-                      url: "<?php echo base_url('commission/get_provider_products');?>",
-                      type: "POST",
-                      data: {provider_id: provider_id} ,
-                      success: function (response) {
-                          //console.log(response); return false;
-                          $("#all_provider_products").html(response);
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-            // focus on text fields
-            $(".focus_input").focus();
-
-            // Set user sign in time
-            $("#sign_in_user").click(function(){
-              $.ajax({
-                      url: "<?php echo base_url('attendance/user_time_in');?>",
-                      type: "POST",
-                      success: function (response) {
-                          $("#sign_in_user").addClass('hide');
-                          //$("#sign_out_user").removeClass('hide');
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-
-            // check user time in or out status
-            $.ajax({
-                    url: "<?php echo base_url('attendance/user_time_status');?>",
-                    type: "POST",
-                    success: function (response) {
-                      console.log(response);
-                        if(response == 0){
-                          //console.log('here is response');
-                          $("#sign_in_user").removeClass('hide');
-                          //$("#sign_out_user").removeClass('hide');  
-                        }
-                        // } else {
-                        //   $("#sign_in_user").removeClass('hide');
-                        //   $("#sign_out_user").addClass('hide');
-                        // }
-                    },
-                    error: function(jqXHR, textStatus, errorThrown) {
-                       console.log(textStatus, errorThrown);
-                    }
-                });
-            // Set dialog message
-            $(".dialog_sign_out_user").click(function (){
-              var user_id = $(this).attr('id');
-              $("#current_signout_user_id").val(user_id);
-              // var <p id="get_user_name">Are you sure you want to signout!</p>
-              var sign_out_user_name = $("#user_name_"+user_id).html(); 
-              console.log(sign_out_user_name);
-              $("#get_user_name").html('');
-              $("#get_user_name").html('Are you sure you want to signout this user '+sign_out_user_name+' !');
-            })
-            // Set user sign out time
-            $("#btn_sign_out").click(function(){
-              var user_id = $("#current_signout_user_id").val();
-              var break_type = $("#break_type").val();
-              $.ajax({
-                      url: "<?php echo base_url('attendance/user_time_out');?>",
-                      type: "POST",
-                      data: {user_id: user_id, break_type: break_type} ,
-                      success: function (response) {
-                        //console.log(response); return false;
-                          $("#signOutModal").modal('hide');
-                          $("#signout_user_row_"+user_id).remove();
-                         //window.location = "user_attendance";
-                        //console.log(response); return false;
-                          //$("#signOutModal").modal('hide');
-                          //$("#sign_in_user").removeClass('hide');
-                          //$("#sign_out_user").addClass('hide');
-                      },
-                      error: function(jqXHR, textStatus, errorThrown) {
-                         console.log(textStatus, errorThrown);
-                      }
-                  });
-            });
-          });
         </script>
 	<style type="text/css">
      .jq-toast-wrap .bottom-right{display: none !important;}   
+     .request_dialog:hover{color: #fff;}
     </style>
     <?php
             include("assets/dist/js/toast-data.php");

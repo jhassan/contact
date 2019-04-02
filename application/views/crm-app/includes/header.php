@@ -68,7 +68,7 @@ License: You must have a valid license purchased only from templatemonster to le
         <!-- Top Navbar -->
         <nav class="navbar navbar-expand-xl navbar-dark fixed-top hk-navbar">
             <a id="navbar_toggle_btn" class="navbar-toggle-btn nav-link-hover" href="javascript:void(0);"><span class="feather-icon"><i data-feather="menu"></i></span></a>
-            <a class="navbar-brand" href="<?php echo base_url('dashboard'); ?>">
+            <a class="navbar-brand hide" href="<?php echo base_url('dashboard'); ?>">
                 <img class="brand-img d-inline-block" src="<?php echo base_url('assets/dist/img/logo-dark.png'); ?>" alt="brand" />
             </a>
             <ul class="navbar-nav hk-navbar-content">
@@ -87,7 +87,7 @@ License: You must have a valid license purchased only from templatemonster to le
                         </div>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right" data-dropdown-in="flipInX" data-dropdown-out="flipOutX">
-                        <a class="dropdown-item" href="profile.html"><i class="dropdown-icon zmdi zmdi-account"></i><span>Profile</span></a>
+                        <a class="dropdown-item hide" href="profile.html"><i class="dropdown-icon zmdi zmdi-account"></i><span>Profile</span></a>
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="<?php echo site_url('user/logout'); ?>"><i class="dropdown-icon zmdi zmdi-power"></i><span>Log out</span></a>
                     </div>
@@ -139,6 +139,7 @@ License: You must have a valid license purchased only from templatemonster to le
                                 </li>
                             </ul>
                         </li>
+                        <?php if($this->session->user_type == 1): ?>
                         <li class="nav-item active">
                             <a class="nav-link" href="javascript:void(0);" data-toggle="collapse" data-target="#dash_drp">
                                 <span class="feather-icon"><svg class="feather feather-users sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="1311"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
@@ -157,6 +158,7 @@ License: You must have a valid license purchased only from templatemonster to le
                                 </li>
                             </ul>
                         </li>
+                    <?php endif; ?>
                         <li class="nav-item active">
                             <a class="nav-link" href="javascript:void(0);" data-toggle="collapse" data-target="#request_drp">
                                 <span class="feather-icon"><svg class="feather feather-users sc-dnqmqq jxshSx" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" data-reactid="1311"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></span>
@@ -169,7 +171,7 @@ License: You must have a valid license purchased only from templatemonster to le
                                             <a class="nav-link" href="<?php echo site_url('request/create_request'); ?>">Create Request</a>
                                         </li>
                                         <li class="nav-item">
-                                            <a class="nav-link" href="<?php echo site_url('user/view_request'); ?>">View/Edit Request</a>
+                                            <a class="nav-link" href="<?php echo site_url('request/view_request'); ?>">View/Edit Request</a>
                                         </li>
                                     </ul>
                                 </li>
