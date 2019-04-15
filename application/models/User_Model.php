@@ -18,6 +18,7 @@ class User_Model extends CI_Model {
     	$where = array (
     		"username"		=>	$name,
             "status"        =>  0,
+            "is_verified"   =>  1,
     		"password"	    =>	md5($password)
     	);
     	$query = $this->localdb->get_where("chr_users", $where);
