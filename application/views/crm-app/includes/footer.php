@@ -262,8 +262,14 @@ else
                 { "data" : "contact" },
                 {
                       "render": function (data, type, JsonResultRow, meta) {
+                          // console.log(JsonResultRow.admin_notes);
                           //return '<img width="50" height="50" src="<?php echo base_url(); ?>uploads/portal_logo/'+JsonResultRow.logo+'">';
-                          return '<button class="btn btn-sm btn-primary request_dialog" data-toggle="modal" data-target="#show-request-dialog">View</button>';
+                          if(JsonResultRow.admin_notes != ""){
+                            return '<button class="btn btn-sm btn-primary request_dialog" data-toggle="modal" data-target="#show-request-dialog">Admin Views</button>';
+                          }
+                          else {
+                            return '';
+                          }
                       }
                   }
               ],

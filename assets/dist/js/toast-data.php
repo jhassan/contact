@@ -14,7 +14,7 @@ $(document).ready(function() {
 		position: 'top-right',
 		loaderBg:'#7a5449',
 		class: 'jq-toast-primary',
-		hideAfter: 3500, 
+		hideAfter: 6000, // 3500 
 		stack: 6,
 		showHideTransition: 'fade'
 	});

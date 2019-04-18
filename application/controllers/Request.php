@@ -195,13 +195,24 @@ class Request extends CI_Controller {
 					$this->load->library('email');  	//load email library
 					$this->email->from('mugheesch@gmail.com', 'My Site'); //sender's email
 					$address = $email;	//receiver's email
-					$subject = "Request Subject";	//subject
-					$message = "Here is message";
+					//$this->email->to($this->input->post('email'));
+					$subject = "View Request By Admin";	//subject
+					$message = "Your request has been processed";
 					/*-----------email body ends-----------*/		      
 					$this->email->to($address);
 					$this->email->subject($subject);
 					$this->email->message($message);
 					$this->email->send();
+					//$this->email->send();
+					// if ( ! $this->email->send())
+					// {
+					//         // Generate error
+					// 	$msg = "Email not sent";
+					// }
+					// else
+					// {
+					// 	$msg = "Email sent";
+					// }
 				endif;	
             	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully"));
             	redirect(site_url("request/view_request"));

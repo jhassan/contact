@@ -165,7 +165,7 @@ class User extends CI_Controller {
             	$this->send_confirmation($last_user_id);
             	// $this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
             	// redirect(site_url("request/view_request"));
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Please check your email!"));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Please check your email for account verification!"));
             	redirect(site_url("/"));
 			endif;
 		endif;

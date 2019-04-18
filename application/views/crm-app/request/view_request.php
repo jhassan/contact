@@ -108,7 +108,7 @@
                 <span aria-hidden="true">×</span>
             </button>
         </div>
-        <div class="modal-body">
+        <div class="modal-body" style="height:350px;overflow:auto;">
             <p id="show_request_response"></p>
         </div>
         <div class="modal-footer">

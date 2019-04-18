@@ -122,7 +122,7 @@
                             <?php if($this->session->user_type == 0): ?>
                             <div class="col-md-12 form-group">
                                 <label for="address">Address</label>
-                                <textarea class="form-control" name="address" rows="3" placeholder="Textarea" required="required"><?php echo $edit_request[0]->address; ?></textarea>
+                                <textarea class="form-control" name="address" rows="3" placeholder="Textarea"><?php echo $edit_request[0]->address; ?></textarea>
                                 <div class="invalid-feedback">
                                     Please enter address.
                                 </div>
@@ -131,7 +131,7 @@
                             <?php if($this->session->user_type == 1): ?>
                             <div class="col-md-12 form-group">
                                 <label for="address">Admin Notes</label>
-                                <textarea class="form-control" name="admin_notes" rows="3" placeholder="Textarea" required="required"><?php echo $edit_request[0]->admin_notes; ?></textarea>
+                                <textarea style="width: 1000px;" class="form-control" name="admin_notes" rows="3" placeholder="Textarea"><?php echo $edit_request[0]->admin_notes; ?></textarea>
                                 <div class="invalid-feedback">
                                     Please enter admin notes.
                                 </div>
