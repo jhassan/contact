@@ -89,17 +89,41 @@ class Request extends CI_Controller {
 				// 	$msg = "Email sent";
 				// }
 				// echo $this->email->print_debugger();
-				$this->load->library('email');  	//load email library
-				$this->email->from('mugheesch@gmail.com', 'My Site'); //sender's email
-				$address = "mugheesch@gmail.com";	//receiver's email
+				$config = Array(
+				     'protocol' => 'sendmail',
+				     'smtp_host' => 'asia.secureserver.net',
+				     'smtp_port' => 465,
+				     'smtp_user' => 'info@gynaeendoscopyhlh.com',
+				     'smtp_pass' => 'egyndosc#4*%$',
+				     'mailtype'  => 'html', 
+				     'charset'   => 'iso-8859-1',
+					 'mailpath'	=> '/usr/sbin/sendmail',
+				     'wordwrap'	=>	TRUE
+				);
+				$this->load->library('email', $config);  	//load email library
+				$this->email->from('info@gynaeendoscopyhlh.com', 'My Site'); //sender's email
+				//$address = "mugheesch@gmail.com";	//receiver's email
+				$address = "info@gynaeendoscopyhlh.com";	//receiver's email
 				$subject = "Request Subject";	//subject
-				$message = "Here is message";
+				$message = "Here is message for request";
 				/*-----------email body ends-----------*/		      
 				$this->email->to($address);
 				$this->email->subject($subject);
 				$this->email->message($message);
-				$this->email->send();
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully" ));
+				//$this->email->send();
+				if ( ! $this->email->send())
+				{
+					show_error($this->email->print_debugger());
+  					return false;
+				        // Generate error
+					$msg = "Email not sent";
+				}
+				else
+				{
+					$this->email->send();
+					$msg = "Email sent";
+				}
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully $msg" ));
             	redirect(site_url("request/view_request"));
             endif;
 		endif;
@@ -191,18 +215,53 @@ class Request extends CI_Controller {
 			                $email = $rows[0]->email;
 			            endif;
 			        endif;
-			        //var_dump($email); die;
-					$this->load->library('email');  	//load email library
-					$this->email->from('mugheesch@gmail.com', 'My Site'); //sender's email
-					$address = $email;	//receiver's email
-					//$this->email->to($this->input->post('email'));
-					$subject = "View Request By Admin";	//subject
-					$message = "Your request has been processed";
+			        // send email
+			        $config = Array(
+				     'protocol' => 'sendmail',
+				     'smtp_host' => 'asia.secureserver.net',
+				     'smtp_port' => 465,
+				     'smtp_user' => 'info@gynaeendoscopyhlh.com',
+				     'smtp_pass' => 'egyndosc#4*%$',
+				     'mailtype'  => 'html', 
+				     'charset'   => 'iso-8859-1',
+					 'mailpath'	=> '/usr/sbin/sendmail',
+				     'wordwrap'	=>	TRUE
+					);
+					$this->load->library('email', $config);  	//load email library
+					$this->email->from('info@gynaeendoscopyhlh.com', 'My Site'); //sender's email
+					//$address = "mugheesch@gmail.com";	//receiver's email
+					$address = "info@gynaeendoscopyhlh.com";	//receiver's email
+					$subject = "Admin read request";	//subject
+					$message = "Here is message from admin";
 					/*-----------email body ends-----------*/		      
-					$this->email->to($address);
+					$this->email->to($this->input->post('email'));
 					$this->email->subject($subject);
 					$this->email->message($message);
-					$this->email->send();
+					//$this->email->send();
+					if ( ! $this->email->send())
+					{
+						show_error($this->email->print_debugger());
+	  					return false;
+					        // Generate error
+						$msg = "Email not sent";
+					}
+					else
+					{
+						$this->email->send();
+						$msg = "Email sent";
+					}
+			        //var_dump($email); die;
+					// $this->load->library('email');  	//load email library
+					// $this->email->from('mugheesch@gmail.com', 'My Site'); //sender's email
+					// $address = $email;	//receiver's email
+					// //$this->email->to($this->input->post('email'));
+					// $subject = "View Request By Admin";	//subject
+					// $message = "Your request has been processed";
+					// /*-----------email body ends-----------*/		      
+					// $this->email->to($address);
+					// $this->email->subject($subject);
+					// $this->email->message($message);
+					// $this->email->send();
 					//$this->email->send();
 					// if ( ! $this->email->send())
 					// {
@@ -214,7 +273,7 @@ class Request extends CI_Controller {
 					// 	$msg = "Email sent";
 					// }
 				endif;	
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully"));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully $msg"));
             	redirect(site_url("request/view_request"));
             //endif;
 		endif;
