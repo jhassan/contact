@@ -101,10 +101,10 @@ class Request extends CI_Controller {
 				     'wordwrap'	=>	TRUE
 				);
 				$this->load->library('email', $config);  	//load email library
-				$this->email->from('info@gynaeendoscopyhlh.com', 'My Site'); //sender's email
+				$this->email->from('info@gynaeendoscopyhlh.com', 'MIGSU'); //sender's email
 				//$address = "mugheesch@gmail.com";	//receiver's email
 				$address = "info@gynaeendoscopyhlh.com";	//receiver's email
-				$subject = "Request Subject";	//subject
+				$subject = "MIGSU";	//subject
 				$message = "Here is message for request";
 				/*-----------email body ends-----------*/		      
 				$this->email->to($address);
@@ -228,11 +228,11 @@ class Request extends CI_Controller {
 				     'wordwrap'	=>	TRUE
 					);
 					$this->load->library('email', $config);  	//load email library
-					$this->email->from('info@gynaeendoscopyhlh.com', 'My Site'); //sender's email
+					$this->email->from('info@gynaeendoscopyhlh.com', 'MIGSU'); //sender's email
 					// $address = "mugheesch@gmail.com";	//receiver's email
 					// $address = "info@gynaeendoscopyhlh.com";	//receiver's email
-					$subject = "Admin read request";	//subject
-					$message = "Here is message from admin";
+					$subject = "MIGSU";	//subject
+					$message = $this->input->post('admin_notes');
 					/*-----------email body ends-----------*/		      
 					$this->email->to($email);
 					$this->email->subject($subject);

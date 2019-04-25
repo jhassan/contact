@@ -201,26 +201,26 @@ class User extends CI_Controller {
 				     'wordwrap'	=>	TRUE
 				);
 				$this->load->library('email', $config);  	//load email library
-				
+				$this->email->set_header($header, $value);
         //var_dump($hash); die;
       // $this->load->library('email');  	//load email library
       // $this->email->from('jawadjee0519@gmail.com', 'My Site'); //sender's email
       $address = $_POST['email'];	//receiver's email
-      $subject="Welcome to MySite!";	//subject
+      $subject="Welcome to MIGSU!";	//subject
       $message= /*-----------email body starts-----------*/
         'Thanks for signing up, '.$_POST['fname'].'!<br />
       
         Your account has been created. <br />
         Here are your login details. <br />
         ------------------------------------------------- <br />
-        Email   : ' . $_POST['email'] . ' <br />
+        User Name   : ' . $_POST['username'] . ' <br />
         Password: ' . $_POST['password'] . ' <br />
         ------------------------------------------------- <br />
                         
-        Please click this link to activate your account: <br />
-            
-        ' . base_url() . 'user/verify?' . 
-        'email=' . $_POST['email'] . '&hash=' . $hash ;
+        Please click this link to activate your account: <br />';
+        $message .= '<a href='. base_url() . 'user/verify?' . 'email=' . $_POST['email'] . '&hash=' . $hash.'>To activate your account.</a>';
+     
+        
 		/*-----------email body ends-----------*/		      
 		$this->email->from('info@gynaeendoscopyhlh.com', 'Sign Up'); //sender's email
 		//$address = "mugheesch@gmail.com";	//receiver's email
