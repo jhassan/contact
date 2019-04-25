@@ -123,7 +123,7 @@ class Request extends CI_Controller {
 					$this->email->send();
 					$msg = "Email sent";
 				}
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully $msg" ));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Created Successfully" ));
             	redirect(site_url("request/view_request"));
             endif;
 		endif;
@@ -229,12 +229,12 @@ class Request extends CI_Controller {
 					);
 					$this->load->library('email', $config);  	//load email library
 					$this->email->from('info@gynaeendoscopyhlh.com', 'My Site'); //sender's email
-					//$address = "mugheesch@gmail.com";	//receiver's email
-					$address = "info@gynaeendoscopyhlh.com";	//receiver's email
+					// $address = "mugheesch@gmail.com";	//receiver's email
+					// $address = "info@gynaeendoscopyhlh.com";	//receiver's email
 					$subject = "Admin read request";	//subject
 					$message = "Here is message from admin";
 					/*-----------email body ends-----------*/		      
-					$this->email->to($this->input->post('email'));
+					$this->email->to($email);
 					$this->email->subject($subject);
 					$this->email->message($message);
 					//$this->email->send();
@@ -273,7 +273,7 @@ class Request extends CI_Controller {
 					// 	$msg = "Email sent";
 					// }
 				endif;	
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully $msg"));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Request Updated Successfully"));
             	redirect(site_url("request/view_request"));
             //endif;
 		endif;
