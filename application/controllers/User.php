@@ -189,30 +189,65 @@ class User extends CI_Controller {
                 $hash = $rows[0]->hash;
             endif;
         endif;	
+        $config = Array(
+				     'protocol' => 'sendmail',
+				     'smtp_host' => 'asia.secureserver.net',
+				     'smtp_port' => 465,
+				     'smtp_user' => 'info@gynaeendoscopyhlh.com',
+				     'smtp_pass' => 'egyndosc#4*%$',
+				     'mailtype'  => 'html', 
+				     'charset'   => 'iso-8859-1',
+					 'mailpath'	=> '/usr/sbin/sendmail',
+				     'wordwrap'	=>	TRUE
+				);
+				$this->load->library('email', $config);  	//load email library
+				$this->email->set_header($header, $value);
         //var_dump($hash); die;
-      $this->load->library('email');  	//load email library
-      $this->email->from('jawadjee0519@gmail.com', 'My Site'); //sender's email
+      // $this->load->library('email');  	//load email library
+      // $this->email->from('jawadjee0519@gmail.com', 'My Site'); //sender's email
       $address = $_POST['email'];	//receiver's email
-      $subject="Welcome to MySite!";	//subject
+      $subject="Welcome to MIGSU!";	//subject
       $message= /*-----------email body starts-----------*/
-        'Thanks for signing up, '.$_POST['fname'].'!
+        'Thanks for signing up, '.$_POST['fname'].'!<br />
       
-        Your account has been created. 
-        Here are your login details.
-        -------------------------------------------------
-        Email   : ' . $_POST['email'] . '
-        Password: ' . $_POST['password'] . '
-        -------------------------------------------------
+        Your account has been created. <br />
+        Here are your login details. <br />
+        ------------------------------------------------- <br />
+        User Name   : ' . $_POST['username'] . ' <br />
+        Password: ' . $_POST['password'] . ' <br />
+        ------------------------------------------------- <br />
                         
-        Please click this link to activate your account:
+        Please click this link to activate your account: <br />';
+        $message .= '<a href='. base_url() . 'user/verify?' . 'email=' . $_POST['email'] . '&hash=' . $hash.'>To activate your account.</a>';
             
-        ' . base_url() . 'user/verify?' . 
-        'email=' . $_POST['email'] . '&hash=' . $hash ;
+        
 		/*-----------email body ends-----------*/		      
-      $this->email->to($address);
-      $this->email->subject($subject);
-      $this->email->message($message);
-      $this->email->send();
+		$this->email->from('info@gynaeendoscopyhlh.com', 'Sign Up'); //sender's email
+		//$address = "mugheesch@gmail.com";	//receiver's email
+		//$address = "info@gynaeendoscopyhlh.com";	//receiver's email
+		//$subject = "Request Subject";	//subject
+		//$message = "Here is message for request";
+		/*-----------email body ends-----------*/		      
+		$this->email->to($address);
+		$this->email->subject($subject);
+		$this->email->message($message);
+		//$this->email->send();
+		if ( ! $this->email->send())
+		{
+			show_error($this->email->print_debugger());
+				return false;
+		        // Generate error
+			$msg = "Email not sent";
+		}
+		else
+		{
+			$this->email->send();
+			$msg = "Email sent";
+		}
+      // $this->email->to($address);
+      // $this->email->subject($subject);
+      // $this->email->message($message);
+      // $this->email->send();
     }
 
     public function verify() {
