@@ -219,7 +219,7 @@ class User extends CI_Controller {
                         
         Please click this link to activate your account: <br />';
         $message .= '<a href='. base_url() . 'user/verify?' . 'email=' . $_POST['email'] . '&hash=' . $hash.'>To activate your account.</a>';
-            
+     
         
 		/*-----------email body ends-----------*/		      
 		$this->email->from('info@gynaeendoscopyhlh.com', 'Sign Up'); //sender's email
