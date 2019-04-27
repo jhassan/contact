@@ -48,6 +48,16 @@
           </div>
       </div>
   </div>
+  <div class="modal fade" id="imagemodal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog" data-dismiss="modal" style="margin-left: 250px;">
+    <div class="modal-content" style="width: 800px;" >              
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <img src="" class="imagepreview" style="width: 100%;" >
+      </div> 
+    </div>
+  </div>
+</div>
 <?php 
 $actual_link = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
 if( strpos( $actual_link, "localhost" ) !== false) 
@@ -129,6 +139,11 @@ else
     <script src="<?php echo base_url('assets/dist/js'); ?>/daterangepicker-data.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.3.0/js/bootstrap-datepicker.js"></script>
 
+    <!-- Gallery JavaScript -->
+    <script src="<?php echo base_url('assets/vendors/lightgallery/dist/js/lightgallery-all.min.js') ?>"></script>
+    <script src="<?php echo base_url('assets/dist/js/froogaloop2.min.js') ?>"></script>
+    <script src="<?php echo base_url('assets/dist/js/gallery-data.js') ?>"></script>
+
     <!-- EChartJS JavaScript -->
     <!-- <script src="<?php echo base_url('assets/vendors/echarts/dist'); ?>/echarts-en.min.js"></script>
     <script src="<?php echo base_url('assets/dist/js') ?>/barcharts-data.js"></script> -->
@@ -147,45 +162,6 @@ else
 	  <script src="<?php echo base_url('assets/dist/js'); ?>/dashboard2-data.js"></script>
     <script src="<?php echo base_url('assets/dist/js'); ?>/validation-data.js"></script>
     <script src="<?php echo base_url('assets/dist/js'); ?>/bootstrap-datetimepicker.min.js"></script>
-    <!-- <script src="<?php echo base_url('assets/js'); ?>/general_js.php"></script> -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <?php //print_r($pie_charts_data); ?>
-    <script type="text/javascript">
-    // Load google charts
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    // Draw the chart and set the chart values
-    function drawChart() {
-      var data = google.visualization.arrayToDataTable([
-      ['Task', 'Hours per Day'],
-      <?php if(count($pie_charts_data) > 0): 
-        $gitem_count = 0;
-        foreach($pie_charts_data as $graph_data):
-        ?>
-      ['<?php echo $graph_data->product_name . " (" . $graph_data->provider_name . ")" ; ?>', <?php echo $graph_data->total_count; ?>],
-      // ['Eat', 2],
-      // ['TV', 4],
-      // ['Gym', 2],
-      // ['Sleep', 8]
-    <?php 
-        $gitem_count += $graph_data->total_count;
-      endforeach; ?>
-    <?php endif; ?>
-    ]);
-
-      // Optional; add a title and set the width and height of the chart
-      var options = { is3D: true, 'title':'Total Sale: <?php echo $gitem_count; ?>', 'width':'100%', 'height':400, pieSliceText: 'value',
-        tooltip: {
-            text: 'value'
-        }}; // My Average Day 
-        // graph type 1) pieHole: 0.4 2) is3D: true 
-
-      // Display the chart inside the <div> element with id="piechart"
-      var chart = new google.visualization.PieChart(document.getElementById('piechart'));
-      chart.draw(data, options);
-    }
-    </script>
     <script>
           jQuery(document).ready(function (e) {
             
@@ -271,6 +247,30 @@ else
                             return '';
                           }
                       }
+                  },
+                  {
+                      "render": function (data, type, JsonResultRow, meta) {
+                          // console.log(JsonResultRow.admin_notes);
+                          //return '<img width="50" height="50" src="<?php echo base_url(); ?>uploads/portal_logo/'+JsonResultRow.logo+'">';
+                          if(JsonResultRow.passport_image != ""){
+                            return '<a href="javascript:void(0)" class="pop"><img src="<?php echo base_url(); ?>uploads/user_images/'+JsonResultRow.passport_image+'" style="width: 50px; height: 50px;" class="img-responsive"></a>';
+                          }
+                          else {
+                            return '';
+                          }
+                      }
+                  },
+                  {
+                      "render": function (data, type, JsonResultRow, meta) {
+                          // console.log(JsonResultRow.admin_notes);
+                          //return '<img width="50" height="50" src="<?php echo base_url(); ?>uploads/portal_logo/'+JsonResultRow.logo+'">';
+                          if(JsonResultRow.fee_recipt_image != ""){
+                            return '<a href="javascript:void(0)" class="pop"><img src="<?php echo base_url(); ?>uploads/user_images/'+JsonResultRow.fee_recipt_image+'" style="width: 50px; height: 50px;" class="img-responsive"></a>';
+                          }
+                          else {
+                            return '';
+                          }
+                      }
                   }
               ],
               "columnDefs": [ {
@@ -283,7 +283,7 @@ else
                                 <?php //endif; ?>  
                         },
                         <?php //if($this->session->user_type == 1): ?>
-                          "targets": 5
+                          "targets": 7
                         <?php //else: ?>
                           //"targets": 4
                         <?php //endif; ?>    
@@ -354,7 +354,14 @@ else
             $(".form_datetime").datetimepicker({
                 autoclose: true
               });
-            
+              
+            });
+              $(function() {
+                $(document).on('click', 'a.pop' ,function() {
+                  //console.log($(this).find('img').attr('src'));
+                  $('.imagepreview').attr('src', $(this).find('img').attr('src'));
+                  $('#imagemodal').modal('show');   
+                });   
             });
         </script>
 	<style type="text/css">

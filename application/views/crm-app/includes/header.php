@@ -41,6 +41,9 @@ License: You must have a valid license purchased only from templatemonster to le
     <!-- Daterangepicker CSS -->
     <link href="<?php echo base_url('assets/vendors/daterangepicker'); ?>/daterangepicker.css" rel="stylesheet" type="text/css" />
 
+    <!-- Lightgallery CSS -->
+    <link href="<?php echo base_url('assets/vendors/lightgallery/dist/css/lightgallery.min.css'); ?>" rel="stylesheet" type="text/css">
+
     <!-- Custom CSS -->
     <link href="<?php echo base_url('assets/dist/css'); ?>/style.css" rel="stylesheet" type="text/css">
 

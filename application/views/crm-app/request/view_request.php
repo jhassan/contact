@@ -43,6 +43,8 @@
                                             <th>City</th>
                                             <th>Contact</th>
                                             <th>Admin Notes</th>
+                                            <th>Passport image</th>
+                                            <th>Fee Recipt Image</th>
                                             <?php //if($this->session->user_type == 1): ?>
                                                 <th>Action</th>
                                             <?php //endif; ?>
@@ -56,6 +58,8 @@
                                             <th>City</th>
                                             <th>Contact</th>
                                             <th>Admin Notes</th>
+                                            <th>Passport image</th>
+                                            <th>Fee Recipt Image</th>
                                             <?php //if($this->session->user_type == 1): ?>
                                                 <th>Action</th>
                                             <?php //endif; ?>
