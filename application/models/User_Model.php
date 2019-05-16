@@ -18,7 +18,8 @@ class User_Model extends CI_Model {
     	$where = array (
     		"username"		=>	$name,
             "status"        =>  0,
-            "is_verified"   =>  1,
+            "is_verified"   =>  0,
+            "is_deleted"    =>  0,
     		"password"	    =>	md5($password)
     	);
     	$query = $this->localdb->get_where("chr_users", $where);
@@ -293,6 +294,34 @@ class User_Model extends CI_Model {
         $data = array('is_verified' => 1);
         $this->localdb->where('email', $email);
         $this->localdb->update('chr_users', $data);
+    }
+
+    public function check_username($username){
+        if($username == ""):
+            return array(
+                "status"    =>  FALSE,
+                "message"   =>  "User Name is required!"
+            );
+        endif;    
+        $where = array(
+            'username'      => trim($username), 
+            'is_deleted'    => 0
+        );
+        $this->localdb->select('username'); 
+        $this->localdb->where($where);
+        $this->localdb->from("chr_users"); 
+        $query = $this->localdb->get();
+        if ($query->num_rows() > 0):
+            return array(
+                "status"    =>  FALSE,
+                "message"   =>  "User Name Already Exists!"
+            );
+        endif;
+        // End validate range
+        return array (
+            "status"    =>  TRUE,
+            "message"   =>  ""
+        );
     }
 
     // get user hash

@@ -149,7 +149,7 @@ class User extends CI_Controller {
 			$this->load->library("form_validation");
 			$this->form_validation->set_rules("fname", "First Name", "required");
 			$this->form_validation->set_rules("lname", "Last Name", "required");
-			$this->form_validation->set_rules("username", "User Name", "required");
+			$this->form_validation->set_rules("username", "User Name", "callback_check_username");
 			$this->form_validation->set_rules('email', 'Email', 'required|min_length[1]|max_length[30]|callback_check_edit_email');
 			$this->form_validation->set_rules("password", "Password", "required");
 			$this->form_validation->set_rules('confirm_password', 'Confirm Password', 'required|matches[password]');
@@ -165,7 +165,7 @@ class User extends CI_Controller {
             	$this->send_confirmation($last_user_id);
             	// $this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"User Created Successfully"));
             	// redirect(site_url("request/view_request"));
-            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Please check your email for account verification!"));
+            	$this->session->set_flashdata('message', array("message_type"=>"success", "message"=>"Your account has been created successfully!"));
             	redirect(site_url("/"));
 			endif;
 		endif;
@@ -215,10 +215,10 @@ class User extends CI_Controller {
         ------------------------------------------------- <br />
         User Name   : ' . $_POST['username'] . ' <br />
         Password: ' . $_POST['password'] . ' <br />
-        ------------------------------------------------- <br />
+        ------------------------------------------------- <br />';
                         
-        Please click this link to activate your account: <br />';
-        $message .= '<a href='. base_url() . 'user/verify?' . 'email=' . $_POST['email'] . '&hash=' . $hash.'>To activate your account.</a>';
+        // Please click this link to activate your account: <br />';
+        // $message .= '<a href='. base_url() . 'user/verify?' . 'email=' . $_POST['email'] . '&hash=' . $hash.'>To activate your account.</a>';
      
         
 		/*-----------email body ends-----------*/		      
@@ -300,6 +300,17 @@ class User extends CI_Controller {
 	    $check_email = $this->User_Model->check_email($email);
     	if ($check_email["status"] == false):
             $this->form_validation->set_message('check_unique_email', $check_email["message"]);
+            return FALSE;
+        else:
+            return TRUE;
+        endif;
+    }
+
+    public function check_username(){
+    	$username = $this->input->post('username');
+	    $check_username = $this->User_Model->check_username($username);
+    	if ($check_username["status"] == false):
+            $this->form_validation->set_message('check_username', $check_username["message"]);
             return FALSE;
         else:
             return TRUE;
